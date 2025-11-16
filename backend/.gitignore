@@ -1,0 +1,12 @@
+app.egg-info
+*.pyc.coverage
+htmlcov
+.cache
+*.pyc
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+downloaded/
+__pypackages__/
+logs/
