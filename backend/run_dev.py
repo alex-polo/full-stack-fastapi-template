@@ -1,6 +1,8 @@
 import uvicorn
 
-if __name__ == "__main__":
+
+def main() -> None:
+    """Starting FastAPI-application in development mode with Uvicorn."""
     uvicorn.run(
         "src.main:app",
         workers=1,
@@ -8,3 +10,7 @@ if __name__ == "__main__":
         port=8000,
         reload=True,
     )
+
+
+if __name__ == "__main__":
+    main()
