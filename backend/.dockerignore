@@ -1,0 +1,15 @@
+# Python
+__pycache__
+app.egg-info
+*.pyc
+.gitignore
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+logs/
+Dockerfile
+standalone.Dockerfile
+.dockerignore
+.venv/
+.env
+.env.template
