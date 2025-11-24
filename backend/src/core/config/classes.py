@@ -96,10 +96,25 @@ class DatabaseSettings(BaseModel):
         )
 
 
+class GunicornSettings(BaseModel):
+    """Gunicorn settings configuration."""
+
+    host: str
+    port: int
+    workers: int = 1
+    timeout: int = 60
+    worker_class: str = "uvicorn.workers.UvicornWorker"
+    access_log: str = "-"
+    error_log: str = "-"
+    log_level: LogLevel = "INFO"
+
+
 class ServerSettings(BaseConfiguration):
     """Server settings configuration."""
 
     ENVIRONMENT: Literal["local", "staging", "prod"]
     PROJECT: ProjectSettings
+    DATABASE: DatabaseSettings
+    GUNICORN: GunicornSettings
     API_PREFIX: ApiPrefix = ApiPrefix()
     LOGGING: LggingSettings = LggingSettings()
