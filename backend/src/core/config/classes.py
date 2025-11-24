@@ -8,12 +8,17 @@ from pydantic import (
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+type LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+
 
 class BaseConfiguration(BaseSettings):
     """Base settings configuration class."""
 
     model_config = SettingsConfigDict(
-        env_file=(".env.template", ".env"),
+        env_file=(
+            ".env.template",
+            ".env",
+        ),
         case_sensitive=False,
         env_nested_delimiter="__",
         env_prefix="BACKEND__",
@@ -25,7 +30,12 @@ class BaseConfiguration(BaseSettings):
 class LggingSettings(BaseModel):
     """Logging settings configuration."""
 
-    SENTRY_DSN: HttpUrl | None = None
+    log_level: LogLevel = "DEBUG"
+    log_format: str = "%(asctime)s %(levelname)6s %(name)s: %(message)s"
+    log_date_format: str = "%Y-%m-%d %H:%M:%S"
+    sentry_dsn: HttpUrl | None = None
+    sentry_traces_sample_rate: float = 1.0
+    sentry_log_level: LogLevel = "ERROR"
 
 
 class ProjectSettings(BaseModel):
@@ -92,4 +102,4 @@ class ServerSettings(BaseConfiguration):
     ENVIRONMENT: Literal["local", "staging", "prod"]
     PROJECT: ProjectSettings
     API_PREFIX: ApiPrefix = ApiPrefix()
-    DATABASE: DatabaseSettings
+    LOGGING: LggingSettings = LggingSettings()
