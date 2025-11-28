@@ -84,6 +84,7 @@ name = "backend"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "alembic" },
     { name = "asyncpg" },
     { name = "fastapi" },
     { name = "gunicorn" },
@@ -96,7 +97,6 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "alembic" },
     { name = "mypy" },
     { name = "pre-commit" },
     { name = "pytest" },
@@ -105,6 +105,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "alembic", specifier = ">=1.17.2" },
     { name = "asyncpg", specifier = ">=0.31.0" },
     { name = "fastapi", specifier = ">=0.121.2" },
     { name = "gunicorn", specifier = ">=23.0.0" },
@@ -117,7 +118,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "alembic", specifier = ">=1.17.2" },
     { name = "mypy", specifier = ">=1.18.2" },
     { name = "pre-commit", specifier = ">=4.4.0" },
     { name = "pytest", specifier = ">=9.0.1" },
