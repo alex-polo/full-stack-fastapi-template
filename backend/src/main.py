@@ -4,6 +4,7 @@ from collections.abc import AsyncIterator
 from fastapi import FastAPI
 
 from src.core.config.logging import setup_logging
+from src.core.database import DB_MANAGER
 
 from .api import api_router
 from .core.config import SERVER_SETTINGS as SETTINGS
@@ -12,9 +13,10 @@ setup_logging()
 
 
 @contextlib.asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncIterator[None]:  # noqa: ARG001, RUF029
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:  # noqa: ARG001
     """FastAPI lifespan context manager."""
     yield
+    await DB_MANAGER.dispose_engine()
 
 
 app = FastAPI(
