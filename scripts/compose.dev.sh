@@ -2,7 +2,7 @@
 set -e
 set -x
 
-if [ ! -f .env.local ]; then
+if [ ! -f .env ]; then
   echo "Error: .env not found in project root" >&2
   exit 1
 fi
