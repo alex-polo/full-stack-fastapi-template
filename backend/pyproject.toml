@@ -11,12 +11,13 @@ dependencies = [
     "pydantic-settings>=2.12.0",
     "pydantic[email]>=2.12.4",
     "sentry-sdk>=2.46.0",
-    "sqlalchemy>=2.0.44",
+    "sqlalchemy[asyncio]>=2.0.44",
+    "asyncpg>=0.31.0",
+    "alembic>=1.17.2",
 ]
 
 [dependency-groups]
 dev = [
-    "alembic>=1.17.2",
     "mypy>=1.18.2",
     "pre-commit>=4.4.0",
     "pytest>=9.0.1",
@@ -90,6 +91,13 @@ ignore = [
 
 fixable = ["ALL"]
 unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"src/models/*.py" = ["N805"]
+"alembic/env.py" = ["I001"]
+
+[tool.ruff.lint.pylint]
+allow-dunder-method-names = ["__tablename__", "__table_args__"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
