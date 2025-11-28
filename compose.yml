@@ -10,8 +10,6 @@ services:
       PGDATA: /var/lib/postgresql/data
     volumes:
       - pgdata:/var/lib/postgresql
-    ports:
-      - "${POSTGRES_PORT?Variable not set}:5432"
     networks:
       - app-network
     restart: unless-stopped
@@ -39,7 +37,8 @@ services:
       - "${BACKEND_PORT?Variable not set}:${BACKEND__GUNICORN__PORT?Variable not set}"
     environment:
       BACKEND__ENVIRONMENT: ${ENVIRONMENT?Variable not set}
-      BACKEND__DATABASE__PORT: ${POSTGRES_PORT?Variable not set}
+      BACKEND__DATABASE__HOST: db
+      BACKEND__DATABASE__PORT: 5432
       BACKEND__DATABASE__USER: ${POSTGRES_USER?Variable not set}
       BACKEND__DATABASE__USER_PASSWORD: ${POSTGRES_PASSWORD?Variable not set}
       BACKEND__DATABASE__DB_NAME: ${POSTGRES_DB?Variable not set}      

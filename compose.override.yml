@@ -1,6 +1,9 @@
 name: full-stack-fastapi-template-dev
 
 services:
+  db:
+    ports:
+      - "${POSTGRES_PORT?Variable not set}:5432"
   backend:
     restart: "no"
     build:
@@ -20,10 +23,8 @@ services:
             - .venv/
         - action: rebuild
           path: ./uv.lock
-    # TODO: remove once coverage is done locally
     # volumes:
     #   - ./backend/htmlcov:/app/htmlcov
-    # TODO: remove once coverage is done locally
   maildev:
     image: maildev/maildev
     restart: always
