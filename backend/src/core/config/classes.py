@@ -65,8 +65,8 @@ class ApiPrefix(BaseModel):
 class DatabaseSettings(BaseModel):
     """Database settings configuration."""
 
-    host: str = "127.0.0.1"
-    port: int = 5432
+    host: str
+    port: int
     user: str
     user_password: str
     db_name: str
@@ -74,6 +74,11 @@ class DatabaseSettings(BaseModel):
     echo_pool: bool = False
     pool_size: int = 50
     max_overflow: int = 10
+    pool_pre_ping: bool = True
+    pool_recycle: int = 3600
+    autoflush: bool = False
+    autocommit: bool = False
+    expire_on_commit: bool = False
 
     naming_convention: dict[str, str] = {
         "ix": "ix_%(column_0_label)s",
