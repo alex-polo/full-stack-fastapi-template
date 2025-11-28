@@ -16,9 +16,10 @@ class BaseConfiguration(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_file=(
-            ".env.template",
-            ".env",
+            "../.env.template",
+            "../.env.local",
         ),
+        env_file_encoding="utf-8",
         case_sensitive=False,
         env_nested_delimiter="__",
         env_prefix="BACKEND__",
