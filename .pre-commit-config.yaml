@@ -2,18 +2,22 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.5
+    rev: v0.14.7
     hooks:
       - id: ruff-check
         types_or: [ python, pyi ]
-        args: [ --fix ]
+        args: [--fix, --config, "backend/pyproject.toml"]
+        files: ^backend/
       - id: ruff-format
         types_or: [ python, pyi ]
+        args: [--config, "backend/pyproject.toml"]
+        files: ^backend/
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.18.2
     hooks:
       - id: mypy
-        args: [--strict, --ignore-missing-imports]
+        args: [--strict, --ignore-missing-imports, --config, "backend/pyproject.toml"]
+        files: ^backend/
         additional_dependencies:
           - fastapi
           - pydantic
