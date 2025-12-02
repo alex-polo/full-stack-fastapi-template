@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:  # noqa: ARG001
 
 
 app = FastAPI(
-    title=SETTINGS.PROJECT.project_name,
+    title=SETTINGS.PROJECT.title,
     description=SETTINGS.PROJECT.description,
     docs_url=SETTINGS.PROJECT.docs_url,
     openapi_url=SETTINGS.PROJECT.openapi_url,

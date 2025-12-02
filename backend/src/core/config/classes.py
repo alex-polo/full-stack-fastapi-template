@@ -48,6 +48,11 @@ class ProjectSettings(BaseModel):
     openapi_url: str = "/docs/openapi.json"
     redoc_url: str = "/re-docs"
 
+    @property
+    def title(self) -> str:
+        """Return project title."""
+        return f"{self.project_name} - Swagger UI"
+
 
 class ApiV1Prefix(BaseModel):
     """API v1 prefix configuration."""
