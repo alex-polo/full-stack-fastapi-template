@@ -36,11 +36,13 @@ run_dev = "run_dev:main"
 run_main = "run_main:main"
 
 [tool.mypy]
+files = ["src"]
 strict = true
 python_version = "3.13"
 exclude = ["venv", ".venv", "alembic", "gunicorn"]
 
 [tool.ruff]
+src = ["."]
 target-version = "py313"
 line-length = 79
 preview = true
@@ -93,7 +95,8 @@ fixable = ["ALL"]
 unfixable = []
 
 [tool.ruff.lint.per-file-ignores]
-"src/models/*.py" = ["N805"]
+"src/core/database/*.py" = ["N805"]
+"backend/src/core/database/base.py" = ["N805"]
 "alembic/env.py" = ["I001"]
 
 [tool.ruff.lint.pylint]
