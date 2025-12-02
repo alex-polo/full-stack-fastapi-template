@@ -2,17 +2,17 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 from sqlalchemy import TIMESTAMP, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import mapped_column
 
 from src.core.utils import utcnow
 
-IntPk = Annotated[Mapped[int], mapped_column(primary_key=True)]
-IntPkOptional = Annotated[
-    Mapped[int], mapped_column(primary_key=True, nullable=True)
-]
+__all__ = ["CreatedAt", "IntPk", "UpdatedAt"]
+
+
+IntPk = Annotated[int, mapped_column(primary_key=True)]
 
 CreatedAt = Annotated[
-    Mapped[datetime],
+    datetime,
     mapped_column(
         TIMESTAMP(timezone=True),
         default=utcnow,
@@ -21,7 +21,7 @@ CreatedAt = Annotated[
 ]
 
 UpdatedAt = Annotated[
-    Mapped[datetime],
+    datetime,
     mapped_column(
         default=datetime.now(UTC),
         onupdate=datetime.now(UTC),

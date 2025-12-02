@@ -15,7 +15,7 @@ def camel_to_snake(name: str) -> str:
             result.append(char.lower())
         else:
             result.append(char)
-    return "".join(result)
+    return f"{''.join(result)}s"
 
 
 def utcnow() -> datetime:
