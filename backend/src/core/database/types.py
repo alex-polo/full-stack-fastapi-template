@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Annotated
 
 from sqlalchemy import TIMESTAMP, Boolean, String, Text, false, func
@@ -57,9 +57,11 @@ CreatedAt = Annotated[
 UpdatedAt = Annotated[
     datetime,
     mapped_column(
-        default=datetime.now(UTC),
-        onupdate=datetime.now(UTC),
+        TIMESTAMP(timezone=True),
+        default=utcnow,
+        onupdate=utcnow,
         server_default=func.now(),
+        server_onupdate=func.now(),
     ),
 ]
 

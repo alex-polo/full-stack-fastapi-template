@@ -5,7 +5,7 @@ def camel_to_snake(name: str) -> str:
     """Convert camel case to snake case."""
     if not name:
         return name
-
+    name = name.replace("ORM", "")
     result = [name[0].lower()]
     for char in name[1:]:
         if char.isupper():
