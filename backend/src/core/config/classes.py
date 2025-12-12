@@ -4,6 +4,7 @@ from pydantic import (
     BaseModel,
     HttpUrl,
     PostgresDsn,
+    SecretStr,
     computed_field,
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -120,12 +121,42 @@ class GunicornSettings(BaseModel):
     log_level: LogLevel = "INFO"
 
 
+class AuthSettings(BaseModel):
+    """Auth settings configuration."""
+
+    prefix: str = "/auth"
+    token_url: str = "/api/v1/auth/login"
+    cookie_name: str = "refresh_token"
+    cookie_max_age: int | None = None
+    cookie_path: str = "/"
+    cookie_domain: str | None = None
+    cookie_secure: bool = True
+    cookie_samesite: Literal["lax", "strict", "none"] = "lax"
+    jwt_access_token_expire_minutes: int = 30
+    jwt_refresh_token_expire_days: int = 30
+    jwt_private_key_path: str
+    jwt_public_key_path: str
+
+
+class AdminSettings(BaseSettings):
+    """Admin settings configuration."""
+
+    email: str
+    password: SecretStr
+    is_active: bool = True
+    is_superuser: bool = True
+    is_verified: bool = True
+
+
 class ServerSettings(BaseConfiguration):
     """Server settings configuration."""
 
     ENVIRONMENT: Literal["local", "staging", "prod"]
+    # DOMAIN: str
     PROJECT: ProjectSettings
     DATABASE: DatabaseSettings
     GUNICORN: GunicornSettings
+    AUTH: AuthSettings
+    ADMIN_USER: AdminSettings
     API_PREFIX: ApiPrefix = ApiPrefix()
     LOGGING: LggingSettings = LggingSettings()
