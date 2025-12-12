@@ -13,3 +13,4 @@ standalone.Dockerfile
 .venv/
 .env
 .env.template
+certificates

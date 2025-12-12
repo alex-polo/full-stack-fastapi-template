@@ -78,6 +78,7 @@ USER nonroot
 # Use `/app` as the working directory
 WORKDIR /app
 
+ENTRYPOINT []
+
 # Run the FastAPI application by production mod
-# CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "src.main:app", "--bind", "0.0.0.0:8000", "--workers", "4"]
 CMD ["run_main"]
