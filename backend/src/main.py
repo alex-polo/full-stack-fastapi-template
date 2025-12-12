@@ -3,6 +3,7 @@ from collections.abc import AsyncIterator
 
 from fastapi import FastAPI
 
+from src.auth.exceptions import register_auth_exception_handlers
 from src.core.config.logging import setup_logging
 from src.core.database import DB_MANAGER
 
@@ -30,3 +31,5 @@ app = FastAPI(
 
 
 app.include_router(api_router)
+
+register_auth_exception_handlers(app=app)
