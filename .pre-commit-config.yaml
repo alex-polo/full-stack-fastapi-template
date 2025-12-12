@@ -39,3 +39,7 @@ repos:
           - gunicorn
           - types-PyJWT
           - pyjwt
+          - passlib
+          - types-passlib
+          - bcrypt
+          - argon2
