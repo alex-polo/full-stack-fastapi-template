@@ -15,6 +15,10 @@ dependencies = [
     "asyncpg>=0.31.0",
     "alembic>=1.17.2",
     "pyjwt[crypto]>=2.10.1",
+    "python-multipart>=0.0.20",
+    "passlib[argon2]>=1.7.4",
+    "types-passlib>=1.7.7.20250602",
+    "types-pyjwt>=1.7.1",
 ]
 
 [dependency-groups]
