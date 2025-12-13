@@ -143,6 +143,9 @@ class AdminSettings(BaseSettings):
 
     email: str
     password: SecretStr
+    first_name: str | None = None
+    patronymic: str | None = None
+    last_name: str | None = None
     is_active: bool = True
     is_superuser: bool = True
     is_verified: bool = True
