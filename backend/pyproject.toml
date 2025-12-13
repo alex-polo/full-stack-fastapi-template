@@ -19,6 +19,7 @@ dependencies = [
     "passlib[argon2]>=1.7.4",
     "types-passlib>=1.7.7.20250602",
     "types-pyjwt>=1.7.1",
+    "tenacity>=9.1.2",
 ]
 
 [dependency-groups]
