@@ -64,7 +64,7 @@ FROM python:3.13-slim-bookworm
 
 # Setup a non-root user
 RUN groupadd --system --gid 999 nonroot \
- && useradd --system --gid 999 --uid 999 --create-home nonroot
+    && useradd --system --gid 999 --uid 999 --create-home nonroot
 
 # Copy the application from the builder
 COPY --from=builder --chown=nonroot:nonroot /app /app
@@ -78,7 +78,10 @@ USER nonroot
 # Use `/app` as the working directory
 WORKDIR /app
 
-ENTRYPOINT []
+RUN chmod +x ./scripts/prestart.sh
+
+# Reset the entrypoint, don't invoke `uv`
+ENTRYPOINT ["./scripts/prestart.sh"]
 
 # Run the FastAPI application by production mod
 CMD ["run_main"]
