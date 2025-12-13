@@ -1,31 +1,71 @@
 import contextlib
+import logging
 
-import sqlalchemy
+from sqlalchemy import exc
 
 from src.auth.application.user_service import UserService
-from src.auth.domain.entities.user import User
+from src.auth.domain.entities import User
 from src.auth.domain.entities.user_profile import UserProfile
 from src.auth.infra.security import hash_password
 from src.auth.infra.unitofwork import AuthUnitOfWork
 from src.core.config import SERVER_SETTINGS
 from src.core.database.db_manager import DB_MANAGER
 
+log = logging.getLogger(__name__)
+
 
 async def init_admin() -> None:
-    """Init admin user."""
-    user_session_context = contextlib.asynccontextmanager(
-        DB_MANAGER.get_session
+    """Initialize the admin user account.
+
+    This function creates an admin user with credentials defined
+    in the server settings.
+
+    Raises:
+        Exception: Propagates any exceptions from database operations except
+                   IntegrityError which indicates user already exists.
+    """
+    log.info("Initializing admin user")
+
+    db_session_context = contextlib.asynccontextmanager(DB_MANAGER.get_session)
+
+    log.debug("Creating admin user instance with provided settings")
+
+    user = User(
+        **SERVER_SETTINGS.ADMIN_USER.model_dump(
+            exclude={"password", "first_name", "patronymic", "last_name"}
+        )
+    )
+    plain_password: str = (
+        SERVER_SETTINGS.ADMIN_USER.password.get_secret_value()
+    )
+    user.hashed_password = hash_password(plain_password)
+    user.profile = UserProfile(
+        first_name=SERVER_SETTINGS.ADMIN_USER.first_name,
+        patronymic=SERVER_SETTINGS.ADMIN_USER.patronymic,
+        last_name=SERVER_SETTINGS.ADMIN_USER.last_name,
     )
 
-    user = User(**SERVER_SETTINGS.ADMIN_USER.model_dump(exclude={"password"}))
-    plain_password = SERVER_SETTINGS.ADMIN_USER.password.get_secret_value()
-    user.hashed_password = hash_password(plain_password)
-    user.profile = UserProfile()
+    log.debug("Admin user instance created with email %r", user.email)
 
-    async with user_session_context() as session:
+    async with db_session_context() as session:
         try:
-            await UserService(uow=AuthUnitOfWork(session)).create_user(
-                creation_user=user,
+            user_service = UserService(uow=AuthUnitOfWork(session))
+            log.debug("Find admin user in database")
+
+            user_db: User | None = await user_service.get_user_by_email(
+                email=user.email
             )
-        except sqlalchemy.exc.IntegrityError:  # pyright: ignore[reportAttributeAccessIssue]
-            print("User already exists")  # noqa: T201
+            if user_db is None:
+                log.debug("Attempting to create admin user in database")
+                await user_service.create_user(creation_user=user)
+                log.info(
+                    "Admin user created successfully with email %r",
+                    user.email,
+                )
+            else:
+                log.info("Admin user found in database, skipping creation")
+
+        except exc.IntegrityError:
+            log.warning(
+                "Admin user already exists in database, skipping creation"
+            )

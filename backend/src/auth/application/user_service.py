@@ -56,6 +56,17 @@ class UserService:
         )
         return user
 
+    async def get_user_by_email(self, email: str) -> User | None:
+        """Retrieve an active user by email.
+
+        Args:
+            email: User email.
+
+        Returns:
+            User.
+        """
+        return await self.uow.user_repo.get_by_email(email)
+
     async def get_active_user_by_id(self, user_id: int) -> User:
         """Retrieve an active user by ID.
 
