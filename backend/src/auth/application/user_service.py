@@ -8,6 +8,7 @@ from src.auth.domain.entities.user_profile import UserProfile
 from src.auth.exceptions import InvalidCredentialsError, InvalidTokenError
 from src.auth.infra.security import hash_password, verify_password
 from src.auth.infra.unitofwork import AuthUnitOfWork
+from src.core.exceptions.exceptions import EntityAlreadyExistsError
 
 log = logging.getLogger(__name__)
 
@@ -124,6 +125,14 @@ class UserService:
         Raises:
             Any exception from the repository.
         """  # noqa: E501
+        user_db: User | None = await self.get_user_by_email(
+            email=user_register.email
+        )
+
+        if user_db:
+            log.warning("User already exists in database, skipping creation")
+            raise EntityAlreadyExistsError("User already exists")
+
         plain_password = user_register.password.get_secret_value()
         hashed_password = hash_password(plain_password)
         user_entity = User(
