@@ -1,4 +1,5 @@
 import contextlib
+import logging
 from collections.abc import AsyncIterator
 
 from fastapi import FastAPI
@@ -6,11 +7,14 @@ from fastapi import FastAPI
 from src.auth.exceptions import register_auth_exception_handlers
 from src.core.config.logging import setup_logging
 from src.core.database import DB_MANAGER
+from src.core.exceptions import register_exception_handlers
 
 from .api import api_router
 from .core.config import SERVER_SETTINGS as SETTINGS
 
 setup_logging()
+
+log = logging.getLogger(__name__)
 
 
 @contextlib.asynccontextmanager
@@ -29,7 +33,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-
+# Register API router
 app.include_router(api_router)
 
+# Register exception handlers
 register_auth_exception_handlers(app=app)
+register_exception_handlers(app=app)
