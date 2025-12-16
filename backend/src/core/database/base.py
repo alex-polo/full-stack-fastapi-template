@@ -6,10 +6,11 @@ from sqlalchemy.orm import (
 )
 
 from src.core.config import SERVER_SETTINGS as SETTINGS
+from src.core.database.mixins import IntIdMixin
 from src.core.utils import camel_to_snake
 
 
-class Base(AsyncAttrs, DeclarativeBase):
+class Base(AsyncAttrs, DeclarativeBase, IntIdMixin):
     """Base class for all models."""
 
     __abstract__ = True

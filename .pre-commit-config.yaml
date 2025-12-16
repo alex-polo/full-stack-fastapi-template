@@ -1,26 +1,47 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.7
+  - repo: local
     hooks:
       - id: ruff-check
-        types_or: [ python, pyi ]
-        args: [--fix, --config, "backend/pyproject.toml"]
-        files: ^backend/
+        name: ruff check
+        entry: bash -c 'cd backend && ruff check --config=pyproject.toml --fix'
+        language: system
+        types_or: [python, pyi]
+        pass_filenames: false
+        require_serial: true
+
       - id: ruff-format
-        types_or: [ python, pyi ]
-        args: [--config, "backend/pyproject.toml"]
-        files: ^backend/
+        name: ruff format
+        entry: bash -c 'cd backend && ruff format --config=pyproject.toml'
+        language: system
+        types_or: [python, pyi]
+        pass_filenames: false
+        require_serial: true
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.18.2
     hooks:
       - id: mypy
-        args: [--strict, --ignore-missing-imports, --config, "backend/pyproject.toml"]
+        args:
+          [
+            --strict,
+            --ignore-missing-imports,
+            --config,
+            "backend/pyproject.toml",
+          ]
         files: ^backend/
         additional_dependencies:
+          - pytest
+          - alembic
           - fastapi
           - pydantic
           - pydantic-settings
           - sqlalchemy
           - gunicorn
+          - types-PyJWT
+          - pyjwt
+          - passlib
+          - types-passlib
+          - bcrypt
+          - argon2
+          - tenacity

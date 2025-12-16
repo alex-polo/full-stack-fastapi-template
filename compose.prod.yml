@@ -14,6 +14,10 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env.production
+    volumes:
+      - ./backend/certificates:/app/certificates
+    ports:
+      - "9000:8000"
     logging:
       driver: "json-file"
       options:

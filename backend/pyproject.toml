@@ -14,10 +14,19 @@ dependencies = [
     "sqlalchemy[asyncio]>=2.0.44",
     "asyncpg>=0.31.0",
     "alembic>=1.17.2",
+    "pyjwt[crypto]>=2.10.1",
+    "python-multipart>=0.0.20",
+    "passlib[argon2]>=1.7.4",
+    "types-passlib>=1.7.7.20250602",
+    "types-pyjwt>=1.7.1",
+    "tenacity>=9.1.2",
+    "argon2-cffi>=25.1.0",
 ]
 
 [dependency-groups]
 dev = [
+    "coverage>=7.13.0",
+    "httpx>=0.28.1",
     "mypy>=1.18.2",
     "pre-commit>=4.4.0",
     "pytest>=9.0.1",
@@ -35,12 +44,22 @@ packages = ["."]
 run_dev = "run_dev:main"
 run_main = "run_main:main"
 
+[tool.pytest.ini_options]
+minversion = "9.0.2"
+testpaths = ["tests", ]
+addopts = "-v"
+filterwarnings = [
+    "ignore::DeprecationWarning:passlib",
+]
+
 [tool.mypy]
 strict = true
 python_version = "3.13"
+# files = ["src"]
 exclude = ["venv", ".venv", "alembic", "gunicorn"]
 
 [tool.ruff]
+src = ["."]
 target-version = "py313"
 line-length = 79
 preview = true
@@ -93,7 +112,8 @@ fixable = ["ALL"]
 unfixable = []
 
 [tool.ruff.lint.per-file-ignores]
-"src/models/*.py" = ["N805"]
+"src/core/database/*.py" = ["N805"]
+"backend/src/core/database/base.py" = ["N805"]
 "alembic/env.py" = ["I001"]
 
 [tool.ruff.lint.pylint]
