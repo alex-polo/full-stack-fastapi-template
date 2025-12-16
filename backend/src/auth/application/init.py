@@ -14,22 +14,9 @@ from src.core.database.db_manager import DB_MANAGER
 log = logging.getLogger(__name__)
 
 
-async def init_admin() -> None:
-    """Initialize the admin user account.
-
-    This function creates an admin user with credentials defined
-    in the server settings.
-
-    Raises:
-        Exception: Propagates any exceptions from database operations except
-                   IntegrityError which indicates user already exists.
-    """
-    log.info("Initializing admin user")
-
-    db_session_context = contextlib.asynccontextmanager(DB_MANAGER.get_session)
-
+def initial_user_from_settings() -> User:
+    """Create an initial user instance from server settings."""
     log.debug("Creating admin user instance with provided settings")
-
     user = User(
         **SERVER_SETTINGS.ADMIN_USER.model_dump(
             exclude={"password", "first_name", "patronymic", "last_name"}
@@ -44,6 +31,25 @@ async def init_admin() -> None:
         patronymic=SERVER_SETTINGS.ADMIN_USER.patronymic,
         last_name=SERVER_SETTINGS.ADMIN_USER.last_name,
     )
+
+    return user
+
+
+async def init_admin() -> None:
+    """Initialize the admin user account.
+
+    This function creates an admin user with credentials defined
+    in the server settings.
+
+    Raises:
+        Exception: Propagates any exceptions from database operations except
+                   IntegrityError which indicates user already exists.
+    """
+    log.info("Initializing admin user")
+
+    db_session_context = contextlib.asynccontextmanager(DB_MANAGER.get_session)
+
+    user: User = initial_user_from_settings()
 
     log.debug("Admin user instance created with email %r", user.email)
 
