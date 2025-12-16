@@ -12,7 +12,6 @@ from src.auth.infra.security import hash_password
 from src.auth.infra.unitofwork import AuthUnitOfWork
 from src.core.config import SERVER_SETTINGS as SETTINGS
 from src.core.utils import utcnow
-from src.main import app
 from src.main import app as fastapi_app
 
 log = logging.getLogger(__name__)
@@ -85,12 +84,12 @@ def auth_uow(admin_user_mock: User) -> Generator[AsyncMock]:
     user_repo_mock.get_by_id.side_effect = mock_get_by_id
     uow_mock.user_repo = user_repo_mock
 
-    app.dependency_overrides[get_auth_uow] = lambda: uow_mock
+    fastapi_app.dependency_overrides[get_auth_uow] = lambda: uow_mock
 
     yield uow_mock
 
-    if get_auth_uow in app.dependency_overrides:
-        del app.dependency_overrides[get_auth_uow]
+    if get_auth_uow in fastapi_app.dependency_overrides:
+        del fastapi_app.dependency_overrides[get_auth_uow]
 
 
 @pytest.fixture(scope="module")
