@@ -54,7 +54,7 @@ class SQLAUserRepository(IUserRepository, SQLAlchemyRepository[UserORM]):
             .options(joinedload(self.model.profile))
         )
 
-        if user_orm is None:
+        if not user_orm:
             return None
 
         return self._to_domain(user_orm=user_orm)
