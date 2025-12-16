@@ -53,9 +53,9 @@ filterwarnings = [
 ]
 
 [tool.mypy]
-files = ["src"]
 strict = true
 python_version = "3.13"
+# files = ["src"]
 exclude = ["venv", ".venv", "alembic", "gunicorn"]
 
 [tool.ruff]
