@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from src.auth.domain.entities.user_profile import UserProfile
 
@@ -14,8 +15,8 @@ class User:
     is_active: bool | None = None
     is_superuser: bool | None = None
     is_verified: bool | None = None
-    created_at: str | None = None
-    updated_at: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     def __repr__(self) -> str:
         """Return a string representation of the object."""
