@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, EmailStr, Field, SecretStr
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr
 
 OpenAPIResponseType = dict[int | str, dict[str, Any]]
 
@@ -26,6 +26,8 @@ class UserProfileRead(BaseModel):
     locale: str | None
     created_at: datetime
     updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserProfileCreate(BaseModel):
@@ -53,6 +55,8 @@ class UserRead(BaseModel):
     is_superuser: bool
     is_verified: bool
     profile: UserProfileRead | None = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserCreate(BaseModel):
