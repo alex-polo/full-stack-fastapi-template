@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, HttpUrl, PostgresDsn, computed_field
+from pydantic import BaseModel, HttpUrl, PostgresDsn, SecretStr, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 type LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -65,7 +65,7 @@ class DatabaseSettings(BaseModel):
     host: str
     port: int
     user: str
-    user_password: str
+    user_password: SecretStr
     db_name: str
     echo: bool = False
     echo_pool: bool = False
@@ -92,8 +92,18 @@ class DatabaseSettings(BaseModel):
         return PostgresDsn.build(
             scheme="postgresql+asyncpg",
             username=self.user,
-            password=self.user_password,
+            password=self.user_password.get_secret_value(),
             host=self.host,
             port=self.port,
             path=self.db_name,
         )
+
+
+class AppSettings(BaseConfiguration):
+    """Server settings configuration."""
+
+    ENVIRONMENT: Literal["local", "staging", "development", "production"]
+    PROJECT: ProjectSettings
+    DATABASE: DatabaseSettings
+    API_PREFIX: ApiPrefix = ApiPrefix()
+    LOGGING: LoggingSettings = LoggingSettings()
