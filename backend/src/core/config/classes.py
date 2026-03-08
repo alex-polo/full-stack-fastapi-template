@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 type LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -44,3 +44,56 @@ class ProjectSettings(BaseModel):
     def title(self) -> str:
         """Return project title."""
         return f"{self.project_name} - Swagger UI"
+
+
+class ApiV1Prefix(BaseModel):
+    """API v1 prefix configuration."""
+
+    prefix: str = "/v1"
+
+
+class ApiPrefix(BaseModel):
+    """API prefix configuration."""
+
+    prefix: str = "/api"
+    v1: ApiV1Prefix = ApiV1Prefix()
+
+
+class DatabaseSettings(BaseModel):
+    """Database settings configuration."""
+
+    host: str
+    port: int
+    user: str
+    user_password: str
+    db_name: str
+    echo: bool = False
+    echo_pool: bool = False
+    pool_size: int = 50
+    max_overflow: int = 10
+    pool_pre_ping: bool = True
+    pool_recycle: int = 3600
+    autoflush: bool = False
+    autocommit: bool = False
+    expire_on_commit: bool = False
+
+    naming_convention: dict[str, str] = {
+        "ix": "ix_%(column_0_label)s",
+        "uq": "uq_%(table_name)s_%(column_0_N_name)s",
+        "ck": "ck_%(table_name)s_%(constraint_name)s",
+        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+        "pk": "pk_%(table_name)s",
+    }
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def database_uri(self) -> PostgresDsn:
+        """Get PostgreSQL DSN."""
+        return PostgresDsn.build(
+            scheme="postgresql+asyncpg",
+            username=self.user,
+            password=self.user_password,
+            host=self.host,
+            port=self.port,
+            path=self.db_name,
+        )
