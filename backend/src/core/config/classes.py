@@ -30,3 +30,17 @@ class LoggingSettings(BaseModel):
     sentry_traces_sample_rate: float = 1.0
     sentry_log_level: LogLevel = "ERROR"
 
+
+class ProjectSettings(BaseModel):
+    """Project settings configuration."""
+
+    project_name: str
+    description: str
+    docs_url: str = "/docs"
+    openapi_url: str = "/docs/openapi.json"
+    redoc_url: str = "/re-docs"
+
+    @property
+    def title(self) -> str:
+        """Return project title."""
+        return f"{self.project_name} - Swagger UI"

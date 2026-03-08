@@ -1,3 +1,3 @@
-from .classes import LoggingSettings
+from .classes import LoggingSettings, ProjectSettings
 
-__all__ = ("LoggingSettings",)
+__all__ = ("LoggingSettings", "ProjectSettings")
