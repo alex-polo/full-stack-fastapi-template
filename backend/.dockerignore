@@ -16,7 +16,6 @@ certificates
 tests/
 test_*.py
 *_test.py
-*.md
 .idea/
 .vscode/
 *.swp
