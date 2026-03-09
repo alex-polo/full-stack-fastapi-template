@@ -1,6 +1,12 @@
 from typing import Literal
 
-from pydantic import BaseModel, HttpUrl, PostgresDsn, SecretStr, computed_field
+from pydantic import (
+    BaseModel,
+    HttpUrl,
+    PostgresDsn,
+    SecretStr,
+    computed_field,
+)
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 type LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -10,7 +16,7 @@ class BaseConfiguration(BaseSettings):
     """Base settings configuration class."""
 
     model_config = SettingsConfigDict(
-        env_file=("../.env",),
+        env_file=(".env.local",),
         env_file_encoding="utf-8",
         case_sensitive=False,
         env_nested_delimiter="__",
@@ -99,17 +105,28 @@ class DatabaseSettings(BaseModel):
         )
 
 
-class GunicornSettings(BaseModel):
+class ServerSettings(BaseModel):
+    """Base server settings."""
+
+    host: str = "0.0.0.0"
+    port: int = 8000
+    log_level: LogLevel = "INFO"
+
+
+class GunicornSettings(ServerSettings):
     """Gunicorn settings configuration."""
 
-    host: str
-    port: int
     workers: int = 1
     timeout: int = 60
     worker_class: str = "uvicorn.workers.UvicornWorker"
     access_log: str = "-"
     error_log: str = "-"
-    log_level: LogLevel = "INFO"
+
+
+class UvicornSettings(ServerSettings):
+    """Uvicorn settings configuration."""
+
+    reload: bool = True
 
 
 class AppSettings(BaseConfiguration):
@@ -120,3 +137,5 @@ class AppSettings(BaseConfiguration):
     DATABASE: DatabaseSettings
     API_PREFIX: ApiPrefix = ApiPrefix()
     LOGGING: LoggingSettings = LoggingSettings()
+    GUNICORN: GunicornSettings = GunicornSettings()
+    UVICORN: UvicornSettings = UvicornSettings()
