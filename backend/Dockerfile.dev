@@ -1,7 +1,7 @@
 # Use the official uv image with Python 3.13 on Debian Bookworm (slim variant).
 # This image includes both Python and uv pre-installed.
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#available-images
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim
 
 # Prevent uv from downloading Python (the base image already provides it).
 ENV UV_PYTHON_DOWNLOADS=0
