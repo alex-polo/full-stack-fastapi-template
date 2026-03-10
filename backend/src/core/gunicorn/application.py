@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from fastapi import FastAPI
 
 
-class GunicornApplication(BaseApplication):  # type: ignore[misc]
+class GunicornApplication(BaseApplication):
     """Custom Gunicorn application for running a FastAPI."""
 
     def __init__(self, app: FastAPI, options: dict[str, str]) -> None:
@@ -24,12 +24,10 @@ class GunicornApplication(BaseApplication):  # type: ignore[misc]
             if key.lower() in self.cfg.settings and value is not None
         }
 
-    def load_config(self) -> dict[str, str]:
+    def load_config(self) -> None:
         """Load Gunicorn configuration from the options."""
         for key, value in self.config_options.items():
             self.cfg.set(key.lower(), value)
-
-        return self.options
 
     def load(self) -> FastAPI:
         """Return the FastAPI application instance to be served.

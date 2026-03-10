@@ -21,13 +21,13 @@ class GunicornLogger(Logger):
             datefmt=APP_SETTINGS.LOGGING.log_date_format,
         )
 
-        self._set_handler(  # type: ignore[unused-ignore]
+        self._set_handler(  # type: ignore[attr-defined]
             log=self.access_log,
             output=cfg.accesslog,
             fmt=log_format,
         )
 
-        self._set_handler(  # type: ignore[unused-ignore]
+        self._set_handler(  # type: ignore[attr-defined]
             log=self.error_log,
             output=cfg.errorlog,
             fmt=log_format,
