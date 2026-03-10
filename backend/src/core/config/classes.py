@@ -10,6 +10,9 @@ from pydantic import (
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 type LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+type UvicornLoop = Literal["auto", "asyncio", "uvloop"]
+type UvicornHTTP = Literal["auto", "h11", "httptools"]
+type UvicornLifespan = Literal["auto", "on", "off"]
 
 
 class BaseConfiguration(BaseSettings):
@@ -108,7 +111,7 @@ class DatabaseSettings(BaseModel):
 class ServerSettings(BaseModel):
     """Base server settings."""
 
-    host: str = "0.0.0.0"
+    host: str = "0.0.0.0"  # noqa: S104
     port: int = 8000
     log_level: LogLevel = "INFO"
 
@@ -122,11 +125,28 @@ class GunicornSettings(ServerSettings):
     access_log: str = "-"
     error_log: str = "-"
 
+    # Graceful shutdown
+    graceful_timeout: int = 30
+
+    # Keep-alive
+    keepalive: int = 5
+
+    # Memory leak protection
+    max_requests: int = 1000
+    max_requests_jitter: int = 50
+
 
 class UvicornSettings(ServerSettings):
     """Uvicorn settings configuration."""
 
     reload: bool = True
+    loop: UvicornLoop = "auto"
+    http: UvicornHTTP = "auto"
+    lifespan: UvicornLifespan = "auto"
+    access_log: bool = True
+    use_colors: bool = True
+
+
 
 
 class AppSettings(BaseConfiguration):
