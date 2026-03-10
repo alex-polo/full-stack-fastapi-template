@@ -23,5 +23,8 @@ FROM nginx:1.29.5
 
 COPY --from=build-stage /spa/dist/ /usr/share/nginx/html
 
-COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx/nginx.conf.template /etc/nginx/conf.d/default.conf.template
 COPY ./nginx/nginx-backend-not-found.conf /etc/nginx/extra-conf.d/backend-not-found.conf
+
+# Replace environment variables in nginx config at runtime
+CMD envsubst '${BACKEND_PORT}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"
