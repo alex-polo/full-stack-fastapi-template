@@ -7,11 +7,16 @@ api_v1_router = APIRouter(
     prefix=APP_SETTINGS.API_PREFIX.v1.prefix,
 )
 
+utils_router = APIRouter(prefix="/utils", tags=["utils"])
 
-@api_v1_router.get("/health")
+
+@utils_router.get("/health-check", response_class=JSONResponse)
 async def health_check() -> JSONResponse:
     """Health check."""
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"status": "healthy"},
     )
+
+
+api_v1_router.include_router(utils_router)

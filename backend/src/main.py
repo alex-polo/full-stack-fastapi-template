@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from src.api import api_roter
 from src.core.config import APP_SETTINGS
 
 app = FastAPI(
@@ -9,3 +10,6 @@ app = FastAPI(
     openapi_url=APP_SETTINGS.PROJECT.openapi_url,
     redoc_url=APP_SETTINGS.PROJECT.redoc_url,
 )
+
+
+app.include_router(api_roter)
