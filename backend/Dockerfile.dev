@@ -22,6 +22,10 @@ ENV UV_LINK_MODE=copy
 # Ensure installed tools can be executed out of the box
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
 
+# Install curl for health checks and remove apt lists to reduce image size
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
 # Use `/app` as the working directory
 WORKDIR /app
 
