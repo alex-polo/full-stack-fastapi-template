@@ -8,6 +8,9 @@ def main() -> None:
     """Main function."""
     setup_logging()
 
+    if APP_SETTINGS.UVICORN is None:
+        raise ValueError("UVICORN settings must be provided for development mode.")
+
     uvicorn.run(
         "src.main:app",
         host=APP_SETTINGS.UVICORN.host,

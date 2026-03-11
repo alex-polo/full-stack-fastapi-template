@@ -158,4 +158,4 @@ class AppSettings(BaseConfiguration):
     API_PREFIX: ApiPrefix = ApiPrefix()
     LOGGING: LoggingSettings = LoggingSettings()
     GUNICORN: GunicornSettings = GunicornSettings()
-    UVICORN: UvicornSettings = UvicornSettings()
+    UVICORN: UvicornSettings | None = None
