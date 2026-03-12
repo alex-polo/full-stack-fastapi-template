@@ -3,6 +3,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.api import api_roter
 from src.core.config import APP_SETTINGS
@@ -34,3 +35,12 @@ app = FastAPI(
 
 
 app.include_router(api_roter)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=APP_SETTINGS.CORS.allow_origins,
+    allow_credentials=APP_SETTINGS.CORS.allow_credentials,
+    allow_methods=APP_SETTINGS.CORS.allow_methods,
+    allow_headers=APP_SETTINGS.CORS.allow_headers,
+)
