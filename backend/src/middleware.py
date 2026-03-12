@@ -4,14 +4,17 @@ import uuid
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
+    from collections.abc import Awaitable, Callable
 
     from fastapi import Request, Response
 
 log = logging.getLogger(__name__)
 
 
-async def request_id_middleware(request: Request, call_next: Callable) -> Response:
+async def request_id_middleware(
+    request: Request,
+    call_next: Callable[[Request], Awaitable[Response]],
+) -> Response:
     """Add request ID for tracing."""
     request_id: str = request.headers.get(
         "X-Request-ID", f"req_{uuid.uuid4().hex[:12]}"
@@ -25,7 +28,10 @@ async def request_id_middleware(request: Request, call_next: Callable) -> Respon
     return response
 
 
-async def timing_middleware(request: Request, call_next: Callable) -> Response:
+async def timing_middleware(
+    request: Request,
+    call_next: Callable[[Request], Awaitable[Response]],
+) -> Response:
     """Add process time header."""
     start_time: float = time.time()
     response: Response = await call_next(request)
@@ -34,7 +40,9 @@ async def timing_middleware(request: Request, call_next: Callable) -> Response:
     return response
 
 
-async def logging_middleware(request: Request, call_next: Callable) -> Response:
+async def logging_middleware(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
     """Log each request with request ID and timing."""
     start_time: float = time.time()
 
