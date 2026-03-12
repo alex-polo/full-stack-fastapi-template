@@ -4,10 +4,18 @@ from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from src.api import api_router
 from src.core.config import APP_SETTINGS
-from src.core.database.engine import DB_HANDLER
+from src.core.config.logging import setup_logging
+from src.core.database import DB_HANDLER
+
+from .middleware import logging_middleware, request_id_middleware, timing_middleware
+
+# Инициализация логирования (должна быть ПЕРЕД созданием app)
+setup_logging()
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
@@ -50,3 +58,20 @@ app.add_middleware(
     allow_methods=APP_SETTINGS.CORS.allow_methods,
     allow_headers=APP_SETTINGS.CORS.allow_headers,
 )
+
+if APP_SETTINGS.ENVIRONMENT in ("production", "staging"):
+    app.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=[
+            APP_SETTINGS.DOMAIN,
+            f"www.{APP_SETTINGS.DOMAIN}",
+        ],
+    )
+
+
+app.middleware("http")(request_id_middleware)
+app.middleware("http")(timing_middleware)
+app.middleware("http")(logging_middleware)
+
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
