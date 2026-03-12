@@ -1,5 +1,5 @@
 """API package."""
 
-from .api import api_roter
+from .api import api_router
 
-__all__ = ("api_roter",)
+__all__ = ("api_router",)

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api import api_roter
+from src.api import api_router
 from src.core.config import APP_SETTINGS
 from src.core.database.engine import DB_HANDLER
 
@@ -41,9 +41,7 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
 )
 
-
-app.include_router(api_roter)
-
+app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
