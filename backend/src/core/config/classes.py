@@ -116,6 +116,28 @@ class ServerSettings(BaseModel):
     log_level: LogLevel = "INFO"
 
 
+class CORSSettings(BaseModel):
+    """CORS settings configuration."""
+
+    allow_credentials: bool = False
+    allow_headers: list[str] = ["Content-Type", "Authorization"]
+
+    allow_origins: list[str] = [
+        "http://localhost:5173",
+        "http://localhost",
+    ]
+
+    allow_methods: list[str] = [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS",
+        "PATCH",
+        "HEAD",
+    ]
+
+
 class GunicornSettings(ServerSettings):
     """Gunicorn settings configuration."""
 
@@ -159,3 +181,4 @@ class AppSettings(BaseConfiguration):
     LOGGING: LoggingSettings = LoggingSettings()
     GUNICORN: GunicornSettings = GunicornSettings()
     UVICORN: UvicornSettings | None = None
+    CORS: CORSSettings = CORSSettings()
