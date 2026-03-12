@@ -14,7 +14,6 @@ from src.core.database import DB_HANDLER
 
 from .middleware import logging_middleware, request_id_middleware, timing_middleware
 
-# Инициализация логирования (должна быть ПЕРЕД созданием app)
 setup_logging()
 
 if TYPE_CHECKING:
@@ -63,6 +62,7 @@ if APP_SETTINGS.ENVIRONMENT in ("production", "staging"):
     app.add_middleware(
         TrustedHostMiddleware,
         allowed_hosts=[
+            "localhost",
             APP_SETTINGS.DOMAIN,
             f"www.{APP_SETTINGS.DOMAIN}",
         ],
