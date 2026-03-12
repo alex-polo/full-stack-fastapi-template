@@ -12,7 +12,14 @@ from src.core.database.engine import DB_HANDLER
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
+    from fastapi.routing import APIRoute
+
 log = logging.getLogger(__name__)
+
+
+def custom_generate_unique_id(route: APIRoute) -> str:
+    """Generate unique id for OpenAPI route."""
+    return f"{route.tags[0]}-{route.name}"
 
 
 @contextlib.asynccontextmanager
@@ -31,6 +38,7 @@ app = FastAPI(
     openapi_url=APP_SETTINGS.PROJECT.openapi_url,
     redoc_url=APP_SETTINGS.PROJECT.redoc_url,
     lifespan=lifespan,
+    generate_unique_id_function=custom_generate_unique_id,
 )
 
 
