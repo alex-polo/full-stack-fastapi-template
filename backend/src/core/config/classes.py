@@ -175,6 +175,7 @@ class AppSettings(BaseConfiguration):
     """Server settings configuration."""
 
     ENVIRONMENT: Literal["local", "staging", "development", "production"]
+    DOMAIN: str
     PROJECT: ProjectSettings
     DATABASE: DatabaseSettings
     API_PREFIX: ApiPrefix = ApiPrefix()
