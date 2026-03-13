@@ -11,6 +11,7 @@ from src.api import api_router
 from src.core.config import APP_SETTINGS
 from src.core.config.logging import setup_logging
 from src.core.database import DB_HANDLER
+from src.core.exceptions.handlers import register_exceptions
 
 from .middleware import logging_middleware, request_id_middleware, timing_middleware
 
@@ -75,3 +76,5 @@ app.middleware("http")(logging_middleware)
 
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+register_exceptions(app=app)
