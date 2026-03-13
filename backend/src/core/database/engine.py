@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Annotated, Final
 
 from fastapi import Depends
@@ -41,10 +42,11 @@ class DatabaseHandler:
         """Dispose the engine."""
         await self.async_engine.dispose()
 
+    @asynccontextmanager
     async def get_session(self) -> AsyncGenerator[AsyncSession]:
-        """Returns a database session."""
-        async with self.async_session_maker() as session:
-            yield session
+        """Returns a context session."""
+        async with self.async_session_maker() as session_context:
+            yield session_context
 
 
 DB_HANDLER: Final[DatabaseHandler] = DatabaseHandler(db_settings=APP_SETTINGS.DATABASE)
