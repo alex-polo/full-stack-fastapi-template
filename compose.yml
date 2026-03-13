@@ -66,6 +66,8 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+    extra_hosts:
+      - "glitchtip.local:host-gateway"
     environment:
       BACKEND__ENVIRONMENT: ${ENVIRONMENT?Variable not set}
       BACKEND__DOMAIN: ${DOMAIN?Variable not set}
@@ -78,6 +80,7 @@ services:
       BACKEND__DATABASE__USER: ${POSTGRES_USER?Variable not set}
       BACKEND__DATABASE__USER_PASSWORD: ${POSTGRES_PASSWORD?Variable not set}
       BACKEND__DATABASE__DB_NAME: ${POSTGRES_DB?Variable not set}
+      BACKEND__LOGGING__SENTRY_DSN: ${SENTRY_DSN?Variable not set}
     volumes:
       - certificates-data:/app/certificates
     networks:
