@@ -21,7 +21,7 @@ WAIT_SECONDS: int = 5
 AFTER_DELAY: int = 300  # 5 minutes
 
 
-@retry(  # type: ignore[untyped-decorator]
+@retry(
     stop=(stop_after_attempt(MAX_RETRIES) | stop_after_delay(AFTER_DELAY)),
     wait=wait_fixed(WAIT_SECONDS),
     before=before_log(log, logging.INFO),
