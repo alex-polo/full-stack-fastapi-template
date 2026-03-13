@@ -14,6 +14,7 @@ dependencies = [
     "pydantic-settings>=2.13.1",
     "sentry-sdk>=2.54.0",
     "sqlalchemy[asyncio]>=2.0.48",
+    "tenacity>=9.1.4",
     "types-gunicorn>=25.1.0.20260215",
     "uvicorn>=0.41.0",
 ]
@@ -177,7 +178,7 @@ warn_untyped_fields = true              # Warn if fields are not explicitly type
 [tool.pytest.ini_options]
 minversion = "9.0"
 testpaths = ["tests"]
-addopts = "-ra -q --cov=app"
+addopts = "-ra -q --cov=src"
 asyncio_mode = "auto"
 python_files = "test_*.py"
 
@@ -188,4 +189,4 @@ omit = ["tests/*", "**/__init__.py"]
 
 [tool.coverage.report]
 show_missing = true
-#fail_under = 80
+fail_under = 80
