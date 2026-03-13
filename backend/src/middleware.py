@@ -21,9 +21,9 @@ async def request_id_middleware(
     )
     try:
         response: Response = await call_next(request)
-    except Exception:
-        log.exception(f"[{request_id}] Request failed")
-        raise
+    except Exception as e:
+        log.error(f"[{request_id}] Request failed")
+        raise e
     response.headers["X-Request-ID"] = request_id
     return response
 
@@ -46,7 +46,12 @@ async def logging_middleware(
     """Log each request with request ID and timing."""
     start_time: float = time.time()
 
-    response: Response = await call_next(request)
+    try:
+        response: Response = await call_next(request)
+    except Exception as e:
+        request_id: str = getattr(request.state, "request_id", "unknown")
+        log.error("[%s] Request failed", request_id)
+        raise e
 
     request_id: str = response.headers.get("X-Request-ID", "unknown")
     process_time: float = time.time() - start_time
