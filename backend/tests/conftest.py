@@ -1,16 +1,32 @@
 from typing import TYPE_CHECKING
 
 import pytest
-from fastapi.testclient import TestClient
+from httpx import ASGITransport, AsyncClient
 
 from src.main import app
 
 if TYPE_CHECKING:
-    from collections.abc import Generator
+    from collections.abc import AsyncGenerator
+
+
+@pytest.fixture(scope="session")
+def anyio_backend() -> str:
+    """Required fixture for pytest-asyncio/anyio to work."""
+    return "asyncio"
 
 
 @pytest.fixture(scope="module")
-def client() -> Generator[TestClient]:
-    """Create test client."""
-    with TestClient(app) as c:
-        yield c
+async def client() -> AsyncGenerator[AsyncClient]:
+    """AsyncClient for testing FastAPI application."""
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://testserver"
+    ) as ac:
+        yield ac
+
+
+# Example of a second client for authorized requests if needed
+@pytest.fixture(scope="module")
+async def auth_client(client: AsyncClient) -> AsyncGenerator[AsyncClient]:  # noqa: RUF029
+    """Client with pre-set authorization token."""
+    client.headers.update({"Authorization": "Bearer fake-token"})
+    yield client
