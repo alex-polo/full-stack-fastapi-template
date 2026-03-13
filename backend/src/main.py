@@ -12,8 +12,8 @@ from src.core.config import APP_SETTINGS
 from src.core.config.logging import setup_logging
 from src.core.database import DB_HANDLER
 from src.core.exceptions.handlers import register_exceptions
-
-from .middleware import logging_middleware, request_id_middleware, timing_middleware
+from src.core.schemas.error import ErrorSchema
+from src.middleware import logging_middleware, request_id_middleware, timing_middleware
 
 setup_logging()
 
@@ -47,6 +47,10 @@ app = FastAPI(
     redoc_url=APP_SETTINGS.PROJECT.redoc_url,
     lifespan=lifespan,
     generate_unique_id_function=custom_generate_unique_id,
+    responses={
+        422: {"model": ErrorSchema, "description": "Validation Error"},
+        500: {"model": ErrorSchema, "description": "Internal Server Error"},
+    },
 )
 
 app.include_router(api_router)
@@ -68,7 +72,6 @@ if APP_SETTINGS.ENVIRONMENT in ("production", "staging"):
             f"www.{APP_SETTINGS.DOMAIN}",
         ],
     )
-
 
 app.middleware("http")(request_id_middleware)
 app.middleware("http")(timing_middleware)
