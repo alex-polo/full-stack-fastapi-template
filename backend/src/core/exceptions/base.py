@@ -66,7 +66,6 @@ class EntityNotFoundError(RepositoryError):
 
         full_message = f"{message} ({', '.join(msg_parts)})" if msg_parts else message
 
-        # 2. Передаем в родительский класс базовые параметры
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             message=full_message,

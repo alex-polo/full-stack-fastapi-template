@@ -92,7 +92,6 @@ def sqlalchemy_exception_handler(
     error_code = "DATABASE_ERROR"
     message = "An unexpected database error occurred."
 
-    # Обработка ошибок целостности (400 вместо 500)
     if isinstance(exc, IntegrityError):
         status_code = status.HTTP_400_BAD_REQUEST
         error_code = "INTEGRITY_ERROR"
@@ -103,7 +102,7 @@ def sqlalchemy_exception_handler(
             code=error_code,
             message=message,
             path=request.url.path,
-            details=None,  # Безопасность превыше всего
+            details=None,
         ),
     )
     return JSONResponse(status_code=status_code, content=error_data.model_dump())

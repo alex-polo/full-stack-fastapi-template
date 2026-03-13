@@ -48,7 +48,6 @@ async def logging_middleware(
 
     response: Response = await call_next(request)
 
-    # Читаем request_id из response (после call_next)
     request_id: str = response.headers.get("X-Request-ID", "unknown")
     process_time: float = time.time() - start_time
     log.info(
