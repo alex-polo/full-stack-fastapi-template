@@ -33,6 +33,7 @@ repos:
           - pydantic-settings
           - sqlalchemy
           - gunicorn
+          - types-gunicorn
           - types-PyJWT
           - pyjwt
           - passlib
