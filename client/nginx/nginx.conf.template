@@ -10,7 +10,7 @@ server {
   location ${BACKEND_API_PREFIX} {
     proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT};
     
-    # Передаём оригинальный Host от браузера
+    # Pass original Host from browser
     proxy_set_header Host $http_host;
     proxy_set_header X-Forwarded-Host $http_host;
     proxy_set_header X-Real-IP $remote_addr;
