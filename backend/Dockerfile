@@ -82,10 +82,15 @@ USER nonroot
 # Use `/app` as the working directory
 WORKDIR /app
 
-#RUN chmod +x ./scripts/prestart.sh
+RUN chmod +x ./scripts/prestart.sh
 
 # Reset the entrypoint, don't invoke `uv`
-#ENTRYPOINT ["./scripts/prestart.sh"]
+# ENTRYPOINT ["./scripts/prestart.sh"]
 
-# Run the FastAPI application by production mod
+# # Run the FastAPI application by production mod
+# CMD ["run_main"]
+
+ENTRYPOINT ["./scripts/prestart.sh"]
+
+# Run the development entrypoint defined in pyproject.toml.
 CMD ["run_main"]
