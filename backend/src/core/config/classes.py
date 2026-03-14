@@ -32,12 +32,12 @@ class BaseConfiguration(BaseSettings):
 class LoggingSettings(BaseModel):
     """Logging settings configuration."""
 
-    log_level: LogLevel = "DEBUG"
+    log_level: LogLevel = "INFO"
     log_format: str = "%(asctime)s %(levelname)6s %(name)s: %(message)s"
     log_date_format: str = "%Y-%m-%d %H:%M:%S"
     sentry_dsn: HttpUrl | None = None
     sentry_traces_sample_rate: float = 1.0
-    sentry_log_level: LogLevel = "ERROR"
+    sentry_log_level: LogLevel = "INFO"
 
 
 class ProjectSettings(BaseModel):

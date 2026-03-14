@@ -30,3 +30,8 @@ def setup_logging() -> None:
         datefmt=APP_SETTINGS.LOGGING.log_date_format,
         force=True,
     )
+
+    for logger in logging.Logger.manager.loggerDict.values():
+        if isinstance(logger, logging.Logger):
+            logger.setLevel(APP_SETTINGS.LOGGING.log_level)
+            logger.propagate = True
