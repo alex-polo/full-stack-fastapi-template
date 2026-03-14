@@ -97,7 +97,7 @@ def universal_exception_handler(request: Request, exc: Exception) -> JSONRespons
     Returns:
         A JSONResponse with HTTP 500 and a user-friendly message.
     """
-    log.error("Unhandled error occurred in request: %s", exc, exc_info=exc)
+    log.error("Unhandled error occurred in request: %s", exc)
 
     error_data = ErrorSchema(
         error=ErrorDetail(
