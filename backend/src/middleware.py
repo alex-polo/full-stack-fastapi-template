@@ -25,7 +25,7 @@ async def observability_middleware(
 
         process_time = time.perf_counter() - start_time
 
-        response.headers["X-Request-ID"] = request_id
+        response.headers["X-Request-ID"] = f"req_{request_id}"
         response.headers["X-Process-Time"] = f"{process_time:.4f}s"
 
         log.info(
