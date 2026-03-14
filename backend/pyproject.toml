@@ -189,7 +189,15 @@ python_files = "test_*.py"
 
 [tool.coverage.run]
 source = ["src"]
-omit = ["tests/*", "**/__init__.py"]
+omit = [
+            "tests/*", 
+            "**/__init__.py", 
+            "backend_pre_start.py", 
+            "initial_data.py", 
+            "run_dev.py", 
+            "run_main.py",
+            "src/core/gunicorn/application.py"
+        ]
 
 [tool.coverage.report]
 show_missing = true
