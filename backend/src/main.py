@@ -13,7 +13,9 @@ from src.core.config.logging import setup_logging
 from src.core.database import DB_HANDLER
 from src.core.exceptions.handlers import register_exceptions
 from src.core.schemas.error import ErrorSchema
-from src.middleware import logging_middleware, request_id_middleware, timing_middleware
+from src.middleware import (
+    register_middlewares,
+)
 
 setup_logging()
 
@@ -73,9 +75,7 @@ if APP_SETTINGS.ENVIRONMENT in ("production", "staging"):
         ],
     )
 
-app.middleware("http")(request_id_middleware)
-app.middleware("http")(timing_middleware)
-app.middleware("http")(logging_middleware)
+register_middlewares(app=app)
 
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
