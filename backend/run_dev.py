@@ -1,13 +1,10 @@
 import uvicorn
 
 from src.core.config import APP_SETTINGS
-from src.core.config.logging import setup_logging
 
 
 def main() -> None:
     """Main function."""
-    setup_logging()
-
     if APP_SETTINGS.UVICORN is None:
         raise ValueError("UVICORN settings must be provided for development mode.")
 
