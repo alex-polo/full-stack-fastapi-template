@@ -81,6 +81,7 @@ services:
       BACKEND__DATABASE__USER_PASSWORD: ${POSTGRES_PASSWORD?Variable not set}
       BACKEND__DATABASE__DB_NAME: ${POSTGRES_DB?Variable not set}
       BACKEND__LOGGING__SENTRY_DSN: ${SENTRY_DSN?Variable not set}
+      BACKEND__LOGGING__SENTRY_LOG_LEVEL: ${SENTRY_LOG_LEVEL?Variable not set}
     volumes:
       - certificates-data:/app/certificates
     networks:
