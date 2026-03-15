@@ -1,7 +1,12 @@
 import { ProtectedRoute } from '@/features';
+import { ROUTE_PATHS } from '@/shared/config';
 import { AuthLayout, BaseLayout, DashboardLayout } from '@/widgets';
 import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+
+const NotFoundPage = lazy(() =>
+  import('@/pages/not-found').then(m => ({ default: m.NotFoundPage }))
+);
 
 const HomePage = lazy(() =>
   import('@/pages/home').then(module => ({ default: module.HomePage }))
@@ -24,7 +29,11 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />,
-        handle: { crumb: () => ({ label: 'Главная', path: '/' }) },
+        handle: { crumb: () => ({ label: 'Главная', path: ROUTE_PATHS.HOME }) },
+      },
+      {
+        path: '*',
+        element: <NotFoundPage />,
       },
     ],
   },
@@ -33,7 +42,7 @@ export const router = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       {
-        path: '/login',
+        path: ROUTE_PATHS.LOGIN,
         element: <LoginPage />,
       },
     ],
@@ -46,7 +55,7 @@ export const router = createBrowserRouter([
       {
         element: <DashboardLayout />,
         children: [
-          { path: '/workspace', element: <DashboardPage /> },
+          { path: ROUTE_PATHS.DASHBOARD, element: <DashboardPage /> },
           // { path: '/settings', element: <SettingsPage /> },
         ],
       },
