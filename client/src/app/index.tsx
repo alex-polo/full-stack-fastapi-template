@@ -1,5 +1,6 @@
+import { router } from '@/app/providers';
 import { theme } from '@/shared/config';
-import { BreadcrumbsProvider, router } from '@/shared/lib';
+import { BreadcrumbsProvider } from '@/shared/lib';
 import { GlobalLoader } from '@/shared/ui/loaders';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { Suspense } from 'react';

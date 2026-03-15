@@ -1,5 +1,5 @@
 import { ProtectedRoute } from '@/features';
-import { BaseLayout, DashboardLayout } from '@/widgets';
+import { AuthLayout, BaseLayout, DashboardLayout } from '@/widgets';
 import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
@@ -21,8 +21,21 @@ export const router = createBrowserRouter([
   {
     element: <BaseLayout />,
     children: [
-      { path: '/', element: <HomePage /> },
-      { path: '/login', element: <LoginPage /> },
+      {
+        path: '/',
+        element: <HomePage />,
+        handle: { crumb: () => ({ label: 'Главная', path: '/' }) },
+      },
+    ],
+  },
+  // Auth pages
+  {
+    element: <AuthLayout />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
     ],
   },
 
@@ -33,7 +46,7 @@ export const router = createBrowserRouter([
       {
         element: <DashboardLayout />,
         children: [
-          { path: '/dashboard', element: <DashboardPage /> },
+          { path: '/workspace', element: <DashboardPage /> },
           // { path: '/settings', element: <SettingsPage /> },
         ],
       },

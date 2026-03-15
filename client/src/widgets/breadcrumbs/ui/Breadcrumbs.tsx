@@ -1,22 +1,27 @@
-import { useBreadcrumbs } from '@/shared/lib';
 import {
   Box,
   Link,
   Breadcrumbs as MuiBreadcrumbs,
   Typography,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useMatches } from 'react-router-dom';
 
 export const Breadcrumbs = () => {
-  const { breadcrumbs } = useBreadcrumbs();
+  const matches = useMatches();
 
-  if (breadcrumbs.length === 0) return null;
+  const crumbs = matches
+    .filter((match: any) => Boolean(match.handle?.crumb))
+    .map((match: any) => match.handle.crumb());
+
+  if (crumbs.length === 0 || (crumbs.length === 1 && crumbs[0].path === '/')) {
+    return null;
+  }
 
   return (
     <Box sx={{ mb: 2 }}>
       <MuiBreadcrumbs aria-label="breadcrumb">
-        {breadcrumbs.map((crumb, index) => {
-          const isLast = index === breadcrumbs.length - 1;
+        {crumbs.map((crumb, index) => {
+          const isLast = index === crumbs.length - 1;
 
           return isLast ? (
             <Typography key={crumb.path} color="text.primary">
