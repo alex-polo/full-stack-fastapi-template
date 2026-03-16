@@ -7,7 +7,7 @@ export const Footer = () => {
     <Box
       component="footer"
       sx={{
-        py: 2,
+        py: 1.1,
         px: { xs: 2, md: 4 },
         mt: 'auto',
         borderTop: '1px solid',
