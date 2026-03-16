@@ -1,20 +1,35 @@
-import { router } from '@/app/providers';
-import { theme } from '@/shared/config';
-import { BreadcrumbsProvider } from '@/shared/lib';
-import { GlobalLoader } from '@/shared/ui/loaders';
+import { ErrorBoundary, router } from '@/app/providers';
+import { SITE_CONFIG, theme } from '@/shared/config';
+import { GlobalLoader } from '@/shared/ui';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+
+import './styles/index.css';
+
 export const App = () => {
+  useEffect(() => {
+    document.title = SITE_CONFIG.NAME;
+  }, []);
+
   return (
-    <BreadcrumbsProvider>
+    <ErrorBoundary>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Suspense fallback={<GlobalLoader />}>
           <RouterProvider router={router} />
         </Suspense>
       </ThemeProvider>
-    </BreadcrumbsProvider>
+    </ErrorBoundary>
   );
 };
