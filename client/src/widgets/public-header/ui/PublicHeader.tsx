@@ -21,8 +21,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { PUBLIC_NAVIGATION, ROUTE_PATHS, SITE_CONFIG } from '@/shared/config';
-import { ThemeToggleButton } from '@/shared/ui';
-import { HeaderLogoDesktop, HeaderLogoMobile } from './HeaderLogo';
+import {
+  HeaderLogoDesktop,
+  HeaderLogoMobile,
+  ThemeToggleButton,
+} from '@/shared/ui';
 
 export const PublicHeader = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

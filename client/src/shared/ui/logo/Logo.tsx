@@ -28,7 +28,8 @@ export const HeaderLogoDesktop = ({
         alignItems: 'center',
       }}
     >
-      <LiveTvIcon sx={{ mr: 1, fontSize: 28 }} />
+      <LiveTvIcon sx={{ mr: 1, fontSize: 28, transform: 'translateY(-1px)' }} />
+
       {headerLogoText}
     </Typography>
   );
@@ -52,7 +53,7 @@ export const HeaderLogoMobile = ({ headerLogoText, href }: HeaderLogoProps) => {
         alignItems: 'center',
       }}
     >
-      <LiveTvIcon sx={{ mr: 1, fontSize: 28 }} />
+      <LiveTvIcon sx={{ mr: 1, fontSize: 28, transform: 'translateY(-1px)' }} />
       {headerLogoText}
     </Typography>
   );

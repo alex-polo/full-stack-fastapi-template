@@ -1,14 +1,9 @@
-import { SITE_CONFIG } from '@/shared/config';
+import { ROUTE_PATHS, SITE_CONFIG } from '@/shared/config';
 import { ThemeToggleButton } from '@/shared/ui';
 import { Logout as LogoutIcon, Menu as MenuIcon } from '@mui/icons-material';
-import {
-  AppBar,
-  Box,
-  Button,
-  IconButton,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import { AppBar, Box, Button, IconButton, Toolbar } from '@mui/material';
+// Импортируем твои логотипы
+import { HeaderLogoDesktop, HeaderLogoMobile } from '@/shared/ui/logo';
 
 interface NavbarProps {
   onToggleDrawer: () => void;
@@ -32,9 +27,19 @@ export const DashboardNavbar = ({ onToggleDrawer, onLogout }: NavbarProps) => (
       >
         <MenuIcon />
       </IconButton>
-      <Typography variant="h6" noWrap sx={{ flexGrow: 1, fontWeight: 700 }}>
-        {SITE_CONFIG.NAME}
-      </Typography>
+
+      {/* Вставляем логотип вместо обычного Typography */}
+      <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+        <HeaderLogoDesktop
+          headerLogoText={SITE_CONFIG.NAME}
+          href={ROUTE_PATHS.DASHBOARD} // В дашборде лого ведет на главную дашборда
+        />
+        <HeaderLogoMobile
+          headerLogoText={SITE_CONFIG.SHORT_NAME}
+          href={ROUTE_PATHS.DASHBOARD}
+        />
+      </Box>
+
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <ThemeToggleButton />
         <Button
