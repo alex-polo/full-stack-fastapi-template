@@ -22,6 +22,14 @@ const DashboardPage = lazy(() =>
 );
 
 export const router = createBrowserRouter([
+  // TODO: delete
+  // {
+  //   element: <DashboardLayout />,
+  //   children: [
+  //     { path: '/', element: <DashboardPage /> },
+  //     // { path: '/settings', element: <SettingsPage /> },
+  //   ],
+  // },
   // Public pages
   {
     element: <BaseLayout />,
