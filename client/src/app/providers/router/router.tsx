@@ -1,8 +1,12 @@
-import { ProtectedRoute } from '@/features';
-import { ROUTE_PATHS } from '@/shared/config';
-import { AuthLayout, BaseLayout, DashboardLayout } from '@/widgets';
 import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+
+import { ProtectedRoute } from '@/features';
+import { ROUTE_PATHS } from '@/shared/config';
+
+import { AuthLayout } from '@/widgets/auth-layout';
+import { BaseLayout } from '@/widgets/base-layout';
+import { DashboardLayout } from '@/widgets/dashboard-layout';
 
 const NotFoundPage = lazy(() =>
   import('@/pages/not-found').then(module => ({ default: module.NotFoundPage }))
