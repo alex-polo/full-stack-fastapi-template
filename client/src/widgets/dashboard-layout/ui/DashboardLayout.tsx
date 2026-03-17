@@ -12,6 +12,7 @@ import { DashboardNavbar } from './DashboardNavbar';
 import { DashboardSidebar } from './DashboardSidebar';
 
 const DRAWER_WIDTH = 240;
+const NAVBAR_HEIGHT = 64;
 
 export const DashboardLayout = () => {
   const [open, setOpen] = useState(true);
@@ -43,8 +44,8 @@ export const DashboardLayout = () => {
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
-          minHeight: 'calc(100vh - 64px)',
-          marginTop: '64px',
+          minHeight: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
+          marginTop: `${NAVBAR_HEIGHT}px`,
           width: { sm: open ? `calc(100% - ${DRAWER_WIDTH}px)` : '100%' },
           maxWidth: '100%',
           overflowX: 'hidden',
