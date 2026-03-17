@@ -10,6 +10,21 @@ export const theme = createTheme({
     },
   },
   colorSchemes: {
-    dark: true,
+    light: {
+      palette: {
+        background: {
+          default: '#f4f6f8',
+          paper: '#ffffff',
+        },
+      },
+    },
+    dark: {
+      palette: {
+        background: {
+          default: '#222222',
+          paper: '#151515',
+        },
+      },
+    },
   },
 });

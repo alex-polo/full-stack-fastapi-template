@@ -1,11 +1,11 @@
 import { ROUTE_PATHS } from '@/shared/config';
-import { Footer } from '@/widgets';
+import { Breadcrumbs, Footer } from '@/widgets';
 import {
   Dashboard as DashIcon,
   Person as PersonIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material';
-import { Box } from '@mui/material';
+import { Box, Paper } from '@mui/material';
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { DashboardNavbar } from './DashboardNavbar';
@@ -20,8 +20,8 @@ export const DashboardLayout = () => {
 
   const navItems = [
     { text: 'Dashboard', icon: <DashIcon />, path: ROUTE_PATHS.DASHBOARD },
-    { text: 'Profile', icon: <PersonIcon />, path: '/app/profile' },
-    { text: 'Settings', icon: <SettingsIcon />, path: '/app/settings' },
+    { text: 'Profile', icon: <PersonIcon />, path: ROUTE_PATHS.PROFILE },
+    { text: 'Settings', icon: <SettingsIcon />, path: ROUTE_PATHS.SETTINGS },
   ];
 
   return (
@@ -49,12 +49,27 @@ export const DashboardLayout = () => {
           width: { sm: open ? `calc(100% - ${DRAWER_WIDTH}px)` : '100%' },
           maxWidth: '100%',
           overflowX: 'hidden',
-          transition: theme => theme.transitions.create(['width', 'margin']),
           backgroundColor: 'background.default',
+          transition: theme => theme.transitions.create(['width', 'margin']),
         }}
       >
         <Box sx={{ p: 3, flexGrow: 1 }}>
-          <Outlet />
+          <Box sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+            <Breadcrumbs />
+          </Box>
+          <Paper
+            elevation={0}
+            sx={{
+              p: { xs: 2, md: 4 },
+              borderRadius: 1, // Скругленные углы
+              border: '1px solid',
+              borderColor: 'divider',
+              minHeight: '40vh',
+              boxShadow: '0px 2px 4px rgba(0,0,0,0.03)',
+            }}
+          >
+            <Outlet />
+          </Paper>
         </Box>
         <Footer />
       </Box>
