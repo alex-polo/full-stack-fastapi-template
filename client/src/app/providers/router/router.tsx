@@ -5,7 +5,7 @@ import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 
 const NotFoundPage = lazy(() =>
-  import('@/pages/not-found').then(m => ({ default: m.NotFoundPage }))
+  import('@/pages/not-found').then(module => ({ default: module.NotFoundPage }))
 );
 
 const HomePage = lazy(() =>
@@ -15,6 +15,7 @@ const HomePage = lazy(() =>
 const LoginPage = lazy(() =>
   import('@/pages/login').then(module => ({ default: module.LoginPage }))
 );
+
 const DashboardPage = lazy(() =>
   import('@/pages/dashboard').then(module => ({
     default: module.DashboardPage,
