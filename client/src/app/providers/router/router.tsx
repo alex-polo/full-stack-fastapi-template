@@ -26,15 +26,32 @@ const DashboardPage = lazy(() =>
   }))
 );
 
+const SettingsPage = lazy(() =>
+  import('@/pages/settings').then(module => ({
+    default: module.SettingsPage,
+  }))
+);
 export const router = createBrowserRouter([
   // TODO: delete
-  // {
-  //   element: <DashboardLayout />,
-  //   children: [
-  //     { path: '/', element: <DashboardPage /> },
-  //     // { path: '/settings', element: <SettingsPage /> },
-  //   ],
-  // },
+  {
+    element: <DashboardLayout />,
+    handle: {
+      crumb: () => ({ label: 'Главная', path: ROUTE_PATHS.DASHBOARD }),
+    },
+    children: [
+      {
+        path: ROUTE_PATHS.DASHBOARD,
+        element: <DashboardPage />,
+      },
+      {
+        path: ROUTE_PATHS.SETTINGS,
+        element: <SettingsPage />,
+        handle: {
+          crumb: () => ({ label: 'Настройки', path: ROUTE_PATHS.SETTINGS }),
+        },
+      },
+    ],
+  },
   // Public pages
   {
     element: <BaseLayout />,
