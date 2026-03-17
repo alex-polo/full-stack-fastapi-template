@@ -1,0 +1,26 @@
+server {
+  listen 80;
+
+  location / {
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    try_files $uri /index.html =404;
+  }
+
+  location ${BACKEND_API_PREFIX} {
+    proxy_pass http://${BACKEND_HOST}:${BACKEND_PORT};
+    
+    # Pass original Host from browser
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Forwarded-Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    proxy_connect_timeout 60s;
+    proxy_send_timeout 60s;
+    proxy_read_timeout 60s;
+  }
+
+  include /etc/nginx/extra-conf.d/*.conf;
+}

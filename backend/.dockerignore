@@ -1,0 +1,25 @@
+# Python
+__pycache__
+app.egg-info
+.dockerignore
+.gitignore
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+logs/
+Dockerfile*
+.venv/
+.env
+.env.template
+certificates
+tests/
+test_*.py
+*_test.py
+.idea/
+.vscode/
+*.swp
+tmp/
+temp/
+.DS_Store
+Thumbs.db
