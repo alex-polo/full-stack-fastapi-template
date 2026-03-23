@@ -21,6 +21,8 @@ dependencies = [
     "types-gunicorn>=25.1.0.20260215",
     "uvicorn>=0.41.0",
     "argon2-cffi>=25.1.0",
+    "types-passlib>=1.7.7.20260211",
+    "types-pyjwt>=1.7.1",
 ]
 
 [dependency-groups]
