@@ -12,7 +12,7 @@ api_v1_router = APIRouter(
 utils_router = APIRouter(prefix="/utils", tags=["utils"])
 
 
-@utils_router.get("/health-check", response_class=JSONResponse)
+@utils_router.get("/health-check")
 async def health_check() -> JSONResponse:
     """Health check."""
     return JSONResponse(
