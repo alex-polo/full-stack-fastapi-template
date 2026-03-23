@@ -26,7 +26,7 @@ class IBaseRepository[T, K](ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def list(self, **filters: Any) -> Sequence[T]:  # noqa: ANN401
+    async def get_all(self, **filters: Any) -> Sequence[T]:  # noqa: ANN401
         """Retrieve a collection of entities based on provided filters.
 
         Args:
