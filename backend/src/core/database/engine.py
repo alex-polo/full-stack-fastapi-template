@@ -48,14 +48,23 @@ class DatabaseHandler:
         async with self.async_session_maker() as session_context:
             yield session_context
 
+    def get_session_factory(self) -> async_sessionmaker[AsyncSession]:
+        """Returns a session factory."""
+        return DB_HANDLER.async_session_maker
+
 
 DB_HANDLER: Final[DatabaseHandler] = DatabaseHandler(db_settings=APP_SETTINGS.DATABASE)
 
+
 DBSessionDep = Annotated[AsyncSession, Depends(DB_HANDLER.get_session)]
+SessionFactoryDep = Annotated[
+    async_sessionmaker[AsyncSession], Depends(DB_HANDLER.get_session_factory)
+]
 
 
 __all__ = (
     "DB_HANDLER",
     "DBSessionDep",
     "DatabaseHandler",
+    "SessionFactoryDep",
 )
