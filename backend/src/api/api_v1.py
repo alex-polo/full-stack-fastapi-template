@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from src.auth.api import auth_router
@@ -9,14 +9,13 @@ api_v1_router = APIRouter(
     prefix=APP_SETTINGS.API_PREFIX.v1.prefix,
 )
 
-utils_router = APIRouter(prefix="/utils", tags=["utils"])
+utils_router = APIRouter(prefix="/utils")
 
 
-@utils_router.get("/health-check")
+@utils_router.get("/health-check", tags=["utils"])
 async def health_check() -> JSONResponse:
     """Health check."""
     return JSONResponse(
-        status_code=status.HTTP_200_OK,
         content={"status": "healthy"},
     )
 
