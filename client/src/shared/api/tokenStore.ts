@@ -1,8 +1,11 @@
+import { queryClient } from './queryClient';
+
 export class TokenStore {
   private accessToken: string | null = null;
 
   setAccessToken(token: string) {
     this.accessToken = token;
+    queryClient.setQueryData(['session'], { isAuth: true });
   }
 
   getAccessToken() {
@@ -11,6 +14,8 @@ export class TokenStore {
 
   removeAccessToken() {
     this.accessToken = null;
+    queryClient.setQueryData(['session'], { isAuth: false });
+    queryClient.clear();
   }
 
   hasRefreshToken(): boolean {
