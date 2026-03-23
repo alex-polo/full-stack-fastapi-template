@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Literal
 
 from pydantic import (
@@ -176,27 +177,32 @@ class AuthSettings(BaseModel):
     token_url: str = "/api/v1/auth/login"  # noqa: S105
     cookie_name: str = "refresh_token"
     cookie_max_age: int | None = None
-    cookie_path: str = "/"
+    cookie_path: str = "/api"
     cookie_domain: str | None = None
     cookie_secure: bool = True
     cookie_samesite: Literal["lax", "strict", "none"] = "lax"
-    jwt_access_token_expire_minutes: int = 30
+    jwt_access_token_expire_minutes: int = 5
     jwt_refresh_token_expire_days: int = 30
-    jwt_private_key_path: str
-    jwt_public_key_path: str
+    jwt_private_key_path: Path
+    jwt_public_key_path: Path
+
+    @property
+    def private_key(self) -> str:
+        """Get private key."""
+        return self.jwt_private_key_path.read_text(encoding="utf-8")
+
+    @property
+    def public_key(self) -> str:
+        """Get public key."""
+        return self.jwt_public_key_path.read_text(encoding="utf-8")
 
 
-class RootUserSettings(BaseSettings):
+class RootUserSettings(BaseModel):
     """Admin settings configuration."""
 
     email: str
     password: SecretStr
-    first_name: str | None = None
-    patronymic: str | None = None
-    last_name: str | None = None
-    is_active: bool = True
-    is_superuser: bool = True
-    is_verified: bool = True
+    is_create: bool = True
 
 
 class AppSettings(BaseConfiguration):
@@ -206,6 +212,8 @@ class AppSettings(BaseConfiguration):
     DOMAIN: str
     PROJECT: ProjectSettings
     DATABASE: DatabaseSettings
+    ROOT_USER: RootUserSettings
+    AUTH: AuthSettings
     API_PREFIX: ApiPrefix = ApiPrefix()
     LOGGING: LoggingSettings = LoggingSettings()
     GUNICORN: GunicornSettings = GunicornSettings()
