@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 from src.auth.api import auth_router
 from src.core.config import APP_SETTINGS
+from src.users.api.router import user_router
 
 api_v1_router = APIRouter(
     prefix=APP_SETTINGS.API_PREFIX.v1.prefix,
@@ -23,3 +24,5 @@ async def health_check() -> JSONResponse:
 api_v1_router.include_router(utils_router)
 
 api_v1_router.include_router(auth_router)
+
+api_v1_router.include_router(user_router)
