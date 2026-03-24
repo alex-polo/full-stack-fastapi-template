@@ -1,17 +1,18 @@
+import { UserChip } from '@/entities/user';
 import { ROUTE_PATHS, SITE_CONFIG } from '@/shared/config';
 import { ThemeToggleButton } from '@/shared/ui';
+import { HeaderLogoDesktop, HeaderLogoMobile } from '@/shared/ui/logo';
 import { Logout as LogoutIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { AppBar, Box, Button, IconButton, Toolbar } from '@mui/material';
 
 import { useLogout } from '@/features/auth';
-import { HeaderLogoDesktop, HeaderLogoMobile } from '@/shared/ui/logo';
 
 interface NavbarProps {
   onToggleDrawer: () => void;
 }
 
 export const DashboardNavbar = ({ onToggleDrawer }: NavbarProps) => {
-  const { mutate: logout, isPending } = useLogout();
+  const { mutate: logout, isPending: isLogoutPending } = useLogout();
 
   return (
     <AppBar
@@ -43,6 +44,7 @@ export const DashboardNavbar = ({ onToggleDrawer }: NavbarProps) => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <UserChip />
           <ThemeToggleButton />
           <Button
             color="inherit"
@@ -50,7 +52,7 @@ export const DashboardNavbar = ({ onToggleDrawer }: NavbarProps) => {
             onClick={() => logout()}
             sx={{ textTransform: 'none' }}
           >
-            {isPending ? 'Выход...' : 'Выход'}
+            {isLogoutPending ? 'Выход...' : 'Выход'}
           </Button>
         </Box>
       </Toolbar>

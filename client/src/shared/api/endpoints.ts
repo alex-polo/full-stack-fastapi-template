@@ -5,7 +5,7 @@ export const API_ENDPOINTS = {
     LOGOUT: '/v1/auth/logout',
   },
   USER: {
-    ME: '/users/me',
+    ME: '/v1/users/me',
     UPDATE: (id: string) => `/users/${id}`,
   },
   DASHBOARD: {
