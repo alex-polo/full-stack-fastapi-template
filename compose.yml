@@ -90,6 +90,7 @@ services:
       BACKEND__AUTH__JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${AUTH_JWT_REFRESH_TOKEN_EXPIRE_DAYS?Variable not set}
       BACKEND__AUTH__JWT_PRIVATE_KEY_PATH: ${AUTH_JWT_PRIVATE_KEY_PATH?Variable not set}
       BACKEND__AUTH__JWT_PUBLIC_KEY_PATH: ${AUTH_JWT_PUBLIC_KEY_PATH?Variable not set}
+      BACKEND__AUTH__COOKIE_SECURE: ${AUTH_COOKIE_SECURE?Variable not set}
     volumes:
       - certificates-data:/app/certificates
     networks:
