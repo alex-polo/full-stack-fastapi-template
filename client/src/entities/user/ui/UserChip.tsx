@@ -36,7 +36,6 @@ export const UserChip = () => {
         borderColor: 'rgba(255,255,255,0.2)',
         fontWeight: 500,
         fontSize: isMobile ? 12 : 14,
-        padding: isMobile ? 0 : 1,
         height: 32,
         minWidth: isMobile ? 32 : 'auto',
         transition: 'all 0.2s ease-in-out',
