@@ -30,14 +30,23 @@ export const useLogin = () => {
       navigate(from, { replace: true });
     },
     onError: (error: any) => {
-      const message =
-        error.response?.data?.detail || 'Неверный логин или пароль';
-      notify.error(
-        message === 'LOGIN_BAD_CREDENTIALS'
-          ? 'Неверный логин или пароль'
-          : message
-      );
-      console.log(error);
+      const status = error.response?.status;
+      const detail = error.response?.data?.detail;
+
+      let userMessage = 'Произошла ошибка при входе';
+
+      if (status === 401) {
+        userMessage =
+          detail === 'LOGIN_BAD_CREDENTIALS'
+            ? 'Неверный логин или пароль'
+            : 'Доступ запрещен';
+      } else if (status === 400) {
+        userMessage =
+          typeof detail === 'string' ? detail : 'Некорректный запрос';
+      }
+
+      notify.error(userMessage);
+      console.error(`[Login Error] ${status}:`, error.response?.data);
     },
   });
 };
