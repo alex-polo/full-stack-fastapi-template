@@ -57,7 +57,7 @@ export const DashboardLayout = () => {
             elevation={0}
             sx={{
               p: { xs: 2, md: 4 },
-              borderRadius: 1, // Скругленные углы
+              borderRadius: 1,
               border: '1px solid',
               borderColor: 'divider',
               minHeight: '40vh',
