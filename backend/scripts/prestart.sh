@@ -4,15 +4,18 @@ set -e
 set -x
 
 
-if [[ "$BACKEND__ENVIRONMENT" == "local" ]] || [[ "$BACKEND__ENVIRONMENT" == "development" ]]; then
+if [[ "$BACKEND__ENVIRONMENT" == "local" ]] || 
+    [[ "$BACKEND__ENVIRONMENT" == "development" ]] || 
+    [[ "$BACKEND__ENVIRONMENT" == "staging" ]] ||
+    [[ "$BACKEND__ENVIRONMENT" == "production" ]]; then
     echo "Generate JWT certificates"
     ./scripts/create_certs.sh
-elif [[ "$BACKEND__ENVIRONMENT" == "production" ]] || [[ "$BACKEND__ENVIRONMENT" == "staging" ]]; then
-    echo "Verify JWT certificates exist in production"
-    if [[ ! -f "./certificates/jwt-private.pem" ]] || [[ ! -f "./certificates/jwt-public.pem" ]]; then
-        echo "ERROR: JWT keys are missing in production. Please generate them manually." >&2
-        exit 1
-    fi
+# elif [[ "$BACKEND__ENVIRONMENT" == "production" ]] || [[ "$BACKEND__ENVIRONMENT" == "staging" ]]; then
+#     echo "Verify JWT certificates exist in production"
+#     if [[ ! -f "./certificates/jwt-private.pem" ]] || [[ ! -f "./certificates/jwt-public.pem" ]]; then
+#         echo "ERROR: JWT keys are missing in production. Please generate them manually." >&2
+#         exit 1
+#     fi
 else
     echo "ERROR: Invalid ENVIRONMENT value: '$BACKEND__ENVIRONMENT'. Expected: local, staging, or production." >&2
     exit 1
