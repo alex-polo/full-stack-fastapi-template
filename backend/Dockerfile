@@ -76,6 +76,9 @@ COPY --from=builder --chown=nonroot:nonroot /app /app
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
+RUN mkdir -p /app/certificates && \
+    chown nonroot:nonroot /app/certificates
+
 # Use the non-root user to run our application
 USER nonroot
 
