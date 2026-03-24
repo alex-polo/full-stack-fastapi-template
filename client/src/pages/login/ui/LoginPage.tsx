@@ -17,8 +17,6 @@ export const LoginPage = () => {
   const { mutate, isPending } = useLogin();
 
   const onSubmit = (data: LoginFormValues) => {
-    console.log('Данные готовы для FastAPI:', data);
-    // TODO: mutate login
     mutate(data);
   };
 
