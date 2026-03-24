@@ -1,6 +1,8 @@
 import { ROUTE_PATHS } from '@/shared/config';
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
+import { notify } from '../lib/browser';
+import type { SessionData } from './hooks';
 import { tokenStore } from './tokenStore';
 
 const handleApiError = (error: unknown) => {
@@ -8,10 +10,8 @@ const handleApiError = (error: unknown) => {
     const status = error.response?.status;
 
     if (status === 401) {
-      console.warn('Session expired or access denied. Redirecting to login...');
-
-      if (typeof window !== 'undefined') {
-        window.location.href = ROUTE_PATHS.LOGIN;
+      if (!window.location.pathname.includes(ROUTE_PATHS.LOGIN)) {
+        notify.error('Сессия истекла');
       }
     }
 
@@ -42,14 +42,12 @@ export const queryClient = new QueryClient({
 
 queryClient.setQueryData(['session'], {
   isAuth: !!tokenStore.getAccessToken(),
+  isInitialized: false,
 });
 
 tokenStore.subscribe(token => {
-  queryClient.setQueryData(['session'], {
+  queryClient.setQueryData<SessionData>(['session'], {
     isAuth: !!token,
+    isInitialized: true,
   });
-
-  if (!token) {
-    queryClient.clear(); // Чистим кэш при логауте
-  }
 });

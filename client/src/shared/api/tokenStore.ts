@@ -1,33 +1,42 @@
-// import { queryClient } from './queryClient';
+import { notify } from '../lib/browser';
 
 export class TokenStore {
   private accessToken: string | null = null;
-  private onTokenChange: ((token: string | null) => void) | null = null;
+  private isInitialized = false;
+  private onTokenChange:
+    | ((token: string | null, isInit: boolean) => void)
+    | null = null;
 
   setAccessToken(token: string) {
     this.accessToken = token;
-    // queryClient.setQueryData(['session'], { isAuth: true });
-    this.onTokenChange?.(token);
-  }
-
-  getAccessToken() {
-    return this.accessToken;
+    this.isInitialized = true;
+    this.onTokenChange?.(token, true);
+    notify.success('Вход выполнен');
   }
 
   removeAccessToken() {
     this.accessToken = null;
-    // queryClient.setQueryData(['session'], { isAuth: false });
-    // queryClient.clear();
-    this.onTokenChange?.(null);
+    this.isInitialized = true;
+    this.onTokenChange?.(null, true);
   }
 
-  hasRefreshToken(): boolean {
-    return document.cookie.includes('refresh_token');
+  setInitialized() {
+    this.isInitialized = true;
+    this.onTokenChange?.(this.accessToken, true);
   }
 
-  subscribe(callback: (token: string | null) => void) {
+  subscribe(callback: (token: string | null, isInit: boolean) => void) {
     this.onTokenChange = callback;
   }
-}
 
+  getIsInitialized() {
+    return this.isInitialized;
+  }
+  getAccessToken() {
+    return this.accessToken;
+  }
+  hasRefreshToken() {
+    return document.cookie.includes('refresh_token');
+  }
+}
 export const tokenStore = new TokenStore();

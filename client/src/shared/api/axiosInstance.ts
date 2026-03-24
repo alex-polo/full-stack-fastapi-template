@@ -13,7 +13,7 @@ export const $api = axios.create({
   },
 });
 
-const authApi = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+export const authApi = axios.create({ baseURL: import.meta.env.VITE_API_URL });
 
 $api.interceptors.request.use(config => {
   const token = tokenStore.getAccessToken();

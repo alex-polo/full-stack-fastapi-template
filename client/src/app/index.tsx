@@ -1,6 +1,6 @@
 import { ErrorBoundary, router } from '@/app/providers';
 import { SITE_CONFIG, theme } from '@/shared/config';
-import { GlobalLoader } from '@/shared/ui';
+import { GlobalLoader, GlobalSnackbar } from '@/shared/ui';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Suspense, useEffect } from 'react';
@@ -33,6 +33,7 @@ export const App = () => {
           <CssBaseline />
           <Suspense fallback={<GlobalLoader />}>
             <RouterProvider router={router} />
+            <GlobalSnackbar />
           </Suspense>
         </ThemeProvider>
         <ReactQueryDevtools initialIsOpen={false} />
