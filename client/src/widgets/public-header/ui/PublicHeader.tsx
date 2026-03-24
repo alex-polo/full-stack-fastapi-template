@@ -24,7 +24,7 @@ import {
   HeaderLogoMobile,
   ThemeToggleButton,
 } from '@/shared/ui';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LoginIcon from '@mui/icons-material/ExitToApp';
 
 export const PublicHeader = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -143,7 +143,7 @@ export const PublicHeader = () => {
                 to={ROUTE_PATHS.LOGIN}
                 variant="outlined"
                 color="inherit"
-                startIcon={<ExitToAppIcon />}
+                startIcon={<LoginIcon />}
                 sx={{ borderRadius: 2, textTransform: 'none' }}
               >
                 Вход
