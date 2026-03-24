@@ -43,3 +43,13 @@ export const queryClient = new QueryClient({
 queryClient.setQueryData(['session'], {
   isAuth: !!tokenStore.getAccessToken(),
 });
+
+tokenStore.subscribe(token => {
+  queryClient.setQueryData(['session'], {
+    isAuth: !!token,
+  });
+
+  if (!token) {
+    queryClient.clear(); // Чистим кэш при логауте
+  }
+});
