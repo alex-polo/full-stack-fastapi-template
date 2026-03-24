@@ -36,10 +36,7 @@ export const useLogin = () => {
       let userMessage = 'Произошла ошибка при входе';
 
       if (status === 401) {
-        userMessage =
-          detail === 'LOGIN_BAD_CREDENTIALS'
-            ? 'Неверный логин или пароль'
-            : 'Доступ запрещен';
+        userMessage = userMessage = 'Неверный логин или пароль';
       } else if (status === 400) {
         userMessage =
           typeof detail === 'string' ? detail : 'Некорректный запрос';
