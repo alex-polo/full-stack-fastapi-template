@@ -8,11 +8,15 @@ import { tokenStore } from './tokenStore';
 const handleApiError = (error: unknown) => {
   if (isAxiosError(error)) {
     const status = error.response?.status;
+    const message = error.response?.data?.detail || 'Ошибка запроса';
 
     if (status === 401) {
       if (!window.location.pathname.includes(ROUTE_PATHS.LOGIN)) {
         notify.error('Сессия истекла');
       }
+    }
+    if (status !== 401) {
+      notify.error(message);
     }
 
     console.error(`[API Error] ${status}:`, error.response?.data);

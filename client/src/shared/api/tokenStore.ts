@@ -1,5 +1,3 @@
-import { notify } from '../lib/browser';
-
 export class TokenStore {
   private accessToken: string | null = null;
   private isInitialized = false;
@@ -11,7 +9,6 @@ export class TokenStore {
     this.accessToken = token;
     this.isInitialized = true;
     this.onTokenChange?.(token, true);
-    notify.success('Вход выполнен');
   }
 
   removeAccessToken() {

@@ -27,7 +27,12 @@ $api.interceptors.response.use(
   res => res,
   async error => {
     const originalRequest = error.config;
-
+    const isLoginRequest = originalRequest.url?.includes(
+      API_ENDPOINTS.AUTH.LOGIN
+    );
+    if (error.response?.status === 401 && isLoginRequest) {
+      return Promise.reject(error);
+    }
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
