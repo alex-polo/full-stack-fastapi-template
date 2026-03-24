@@ -44,8 +44,8 @@ export const DashboardNavbar = ({ onToggleDrawer }: NavbarProps) => {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <UserChip />
           <ThemeToggleButton />
+          <UserChip />
           <Button
             color="inherit"
             startIcon={<LogoutIcon />}
