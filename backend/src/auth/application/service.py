@@ -1,14 +1,15 @@
 from typing import TYPE_CHECKING
 
-from src.auth.application.exceptions import (
+from src.auth.domain.entities import CookieSettings, TokenEntity
+from src.users.domain.entities import UserEntity
+
+from .exceptions import (
     AccountDisabledError,
     AccountNotVerifiedError,
     InvalidCredentialsError,
     InvalidTokenError,
     NoRolesAssignedError,
 )
-from src.auth.domain.entities import CookieSettings, TokenEntity
-from src.users.domain.entities import UserEntity
 
 if TYPE_CHECKING:
     from src.auth.application.interfaces import ITokenProvider
@@ -34,35 +35,51 @@ class AuthService:
         self.token_provider = token_provider
         self.auth_cfg = auth_cfg
 
-    def validate_user_status(self, user: UserEntity) -> None:
-        """Validate user is active and verified.
+    def _ensure_valid_user(
+        self,
+        user: UserEntity | None,
+    ) -> UserEntity:
+        """Validate user is active and verified."""
+        if not user or not user.id:
+            raise InvalidCredentialsError()
 
-        Args:
-            user: User entity to validate.
+        if not user.roles_assignments:
+            raise NoRolesAssignedError()
 
-        Raises:
-            AccountDisabledError: If user is not active.
-            AccountNotVerifiedError: If user is not verified.
-        """
         if not user.is_active:
             raise AccountDisabledError()
 
         if not user.is_verified:
             raise AccountNotVerifiedError()
 
-    def calculate_token_expiration(self) -> int:
-        """Calculate token expiration time in seconds.
+        return user
+
+    def _generate_tokens(
+        self,
+        user: UserEntity,
+    ) -> TokenEntity:
+        """Generate access and refresh tokens for user.
+
+        Args:
+            user: User entity to generate tokens for.
 
         Returns:
-            Expiration time in seconds from auth settings.
-        """
-        return (
-            self.auth_cfg.cookie_max_age
-            if self.auth_cfg.cookie_max_age is not None
-            else self.auth_cfg.jwt_refresh_token_expire_days * 24 * 3600
-        )
+            TokenEntity containing access and refresh tokens.
 
-    def create_token_pair(self, access_token: str, refresh_token: str) -> TokenEntity:
+        """
+        access_token = self.token_provider.create_access_token(
+            user_id=user.id,  # type: ignore
+            roles=user.user_roles,
+        )
+        refresh_token = self.token_provider.create_refresh_token(user_id=user.id)  # type: ignore
+
+        return self._create_jwt_token_pair(access_token, refresh_token)
+
+    def _create_jwt_token_pair(
+        self,
+        access_token: str,
+        refresh_token: str,
+    ) -> TokenEntity:
         """Create token pair entity with cookie settings.
 
         Args:
@@ -77,7 +94,7 @@ class AuthService:
             refresh_token=refresh_token,
             cookie_settings=CookieSettings(
                 name=self.auth_cfg.cookie_name,
-                max_age=self.calculate_token_expiration(),
+                max_age=self.auth_cfg.cookie_max_age,
                 path=self.auth_cfg.cookie_path,
                 domain=self.auth_cfg.cookie_domain,
                 secure=self.auth_cfg.cookie_secure,
@@ -85,62 +102,11 @@ class AuthService:
             ),
         )
 
-    def generate_tokens(self, user: UserEntity) -> TokenEntity:
-        """Generate access and refresh tokens for user.
-
-        Args:
-            user: User entity to generate tokens for.
-
-        Returns:
-            TokenEntity containing access and refresh tokens.
-
-        Raises:
-            NoRolesAssignedError: If user has no role assignments.
-        """
-        if not user.roles_assignments:
-            raise NoRolesAssignedError()
-
-        self.validate_user_status(user)
-
-        user_roles = [
-            a.role.name for a in user.roles_assignments if a.role and a.role.is_active
-        ]
-
-        access_token = self.token_provider.create_access_token(
-            user_id=user.id,  # type: ignore
-            roles=user_roles,
-        )
-        refresh_token = self.token_provider.create_refresh_token(user_id=user.id)  # type: ignore
-
-        return self.create_token_pair(access_token, refresh_token)
-
-    async def fetch_user_by_id(self, user_id: int) -> UserEntity:
-        """Fetch user from database by ID.
-
-        Args:
-            user_id: User identifier to fetch.
-
-        Returns:
-            UserEntity if found and valid.
-
-        Raises:
-            InvalidCredentialsError: If user not found.
-            NoRolesAssignedError: If user has no role assignments.
-        """
-        async with self.uow:
-            user: UserEntity | None = await self.uow.users.get_by_id(id=user_id)
-
-            if not user:
-                raise InvalidCredentialsError()
-
-            if not user.roles_assignments:
-                raise NoRolesAssignedError()
-
-            self.validate_user_status(user=user)
-
-            return user
-
-    async def authenticate(self, username: str, password: str) -> TokenEntity:
+    async def authenticate(
+        self,
+        username: str,
+        password: str,
+    ) -> TokenEntity:
         """Authenticate user with credentials and issue tokens.
 
         Args:
@@ -154,17 +120,24 @@ class AuthService:
             InvalidCredentialsError: If credentials are invalid.
         """
         async with self.uow:
-            user = await self.uow.users.get_by_email(email=username)
+            user_from_db: UserEntity | None = await self.uow.users.get_by_email(
+                email=username
+            )
             if (
-                not user
-                or not user.id
-                or not self.hasher.verify(password, user.hashed_password)
+                not user_from_db
+                or not user_from_db.id
+                or not self.hasher.verify(password, user_from_db.hashed_password)
             ):
                 raise InvalidCredentialsError()
 
-            return self.generate_tokens(user)
+            user: UserEntity = self._ensure_valid_user(user=user_from_db)
 
-    async def refresh_session(self, refresh_token: str | None) -> TokenEntity:
+            return self._generate_tokens(user)
+
+    async def refresh_session(
+        self,
+        refresh_token: str | None,
+    ) -> TokenEntity:
         """Refresh session using refresh token.
 
         Args:
@@ -183,17 +156,20 @@ class AuthService:
         user_payload = self.token_provider.decode_token(refresh_token)
         user_id = user_payload.get("sub")
 
-        if user_payload.get("token_type") != "refresh":
+        if user_payload.get("token_type") != "refresh" or not user_id:
             raise InvalidTokenError()
 
-        if not user_id:
-            raise InvalidTokenError()
+        async with self.uow:
+            user_from_db: UserEntity | None = await self.uow.users.get_by_id(id=user_id)
 
-        user = await self.fetch_user_by_id(user_id=int(user_id))
+        user: UserEntity = self._ensure_valid_user(user=user_from_db)
 
-        return self.generate_tokens(user)
+        return self._generate_tokens(user)
 
-    async def get_current_user(self, jwt_token: str) -> UserEntity:
+    async def get_current_user(
+        self,
+        jwt_token: str,
+    ) -> UserEntity:
         """Get authenticated user from JWT access token.
 
         Args:
@@ -208,13 +184,13 @@ class AuthService:
         """
         user_payload = self.token_provider.decode_token(jwt_token)
         user_id = user_payload.get("sub")
-        if user_payload.get("token_type") != "access":
+        if user_payload.get("token_type") != "access" or not user_id:
             raise InvalidTokenError()
 
-        if not user_id:
-            raise InvalidTokenError()
+        async with self.uow:
+            user_from_db: UserEntity | None = await self.uow.users.get_by_id(id=user_id)
 
-        return await self.fetch_user_by_id(user_id=int(user_id))
+        return self._ensure_valid_user(user=user_from_db)
 
     async def logout(self) -> CookieSettings:
         """Create cookie settings for logout (invalidate cookies).
