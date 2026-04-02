@@ -176,7 +176,6 @@ class AuthSettings(BaseModel):
     prefix: str = "/auth"
     token_url: str = "/api/v1/auth/login"  # noqa: S105
     cookie_name: str = "refresh_token"
-    cookie_max_age: int | None = None
     cookie_path: str = "/api"
     cookie_domain: str | None = None
     cookie_secure: bool = True
@@ -185,6 +184,11 @@ class AuthSettings(BaseModel):
     jwt_refresh_token_expire_days: int = 30
     jwt_private_key_path: Path
     jwt_public_key_path: Path
+
+    @property
+    def cookie_max_age(self) -> int:
+        """Get cookie max age."""
+        return self.jwt_refresh_token_expire_days * 24 * 3600
 
     @property
     def private_key(self) -> str:
