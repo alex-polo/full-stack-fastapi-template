@@ -60,3 +60,15 @@ class UserEntity(BaseDomain):
 
     profile: ProfileEntity | None = None
     roles_assignments: list[UserRoleAssignmentEntity] | None = None
+
+    @property
+    def user_roles(self) -> list[str]:
+        """Return user's email."""
+        if not self.roles_assignments:
+            return []
+
+        user_roles = [
+            a.role.name for a in self.roles_assignments if a.role and a.role.is_active
+        ]
+
+        return user_roles
