@@ -154,11 +154,16 @@ class AuthService:
             raise InvalidTokenError()
 
         user_payload = self.token_provider.decode_token(refresh_token)
-        user_id = user_payload.get("sub")
+        token_user_id = user_payload.get("sub")
 
-        if user_payload.get("token_type") != "refresh" or not user_id:
+        if (
+            user_payload.get("token_type") != "refresh"
+            or not token_user_id
+            or not token_user_id.isdigit()
+        ):
             raise InvalidTokenError()
 
+        user_id = int(token_user_id)
         async with self.uow:
             user_from_db: UserEntity | None = await self.uow.users.get_by_id(id=user_id)
 
@@ -183,10 +188,15 @@ class AuthService:
             InvalidCredentialsError: If user not found.
         """
         user_payload = self.token_provider.decode_token(jwt_token)
-        user_id = user_payload.get("sub")
-        if user_payload.get("token_type") != "access" or not user_id:
+        token_user_id = user_payload.get("sub")
+        if (
+            user_payload.get("token_type") != "access"
+            or not token_user_id
+            or not token_user_id.isdigit()
+        ):
             raise InvalidTokenError()
 
+        user_id = int(token_user_id)
         async with self.uow:
             user_from_db: UserEntity | None = await self.uow.users.get_by_id(id=user_id)
 
