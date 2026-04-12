@@ -70,6 +70,7 @@ def app_error_handler(request: Request, exc: AppBaseError) -> JSONResponse:
 
     error_data = ErrorSchema(
         error=ErrorDetail(
+            type=exc.__class__.__name__,
             code=exc.error_code,
             message=exc.message,
             path=request.url.path,
@@ -101,6 +102,7 @@ def universal_exception_handler(request: Request, exc: Exception) -> JSONRespons
 
     error_data = ErrorSchema(
         error=ErrorDetail(
+            type=exc.__class__.__name__,
             code="INTERNAL_SERVER_ERROR",
             message="Something went wrong on our side",
             path=request.url.path,
@@ -137,6 +139,7 @@ def validation_exception_handler(
 
     error_data = ErrorSchema(
         error=ErrorDetail(
+            type=exc.__class__.__name__,
             code="VALIDATION_ERROR",
             message="Invalid input data",
             path=request.url.path,
@@ -178,6 +181,7 @@ def sqlalchemy_exception_handler(
 
     error_data = ErrorSchema(
         error=ErrorDetail(
+            type=exc.__class__.__name__,
             code=error_code,
             message=message,
             path=request.url.path,
@@ -209,6 +213,7 @@ def http_exception_handler(
 
     error_data = ErrorSchema(
         error=ErrorDetail(
+            type=exc.__class__.__name__,
             code=error_code,
             message=exc.detail,
             path=request.url.path,

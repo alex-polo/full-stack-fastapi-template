@@ -1,9 +1,6 @@
-from typing import TYPE_CHECKING
+from sqlalchemy.orm import Mapped
 
-if TYPE_CHECKING:
-    from sqlalchemy.orm import Mapped
-
-    from .types import CreatedAt, IntPk, UpdatedAt
+from .types import CreatedAt, IntPk, UpdatedAt
 
 
 class IntIdMixin:

@@ -82,6 +82,14 @@ services:
       BACKEND__DATABASE__DB_NAME: ${POSTGRES_DB?Variable not set}
       BACKEND__LOGGING__SENTRY_DSN: ${SENTRY_DSN?Variable not set}
       BACKEND__LOGGING__SENTRY_LOG_LEVEL: ${SENTRY_LOG_LEVEL?Variable not set}
+      BACKEND__ROOT_USER_EMAIL: ${ROOT_USER_EMAIL?Variable not set}
+      BACKEND__ROOT_USER_PASSWORD: ${ROOT_USER_PASSWORD?Variable not set}
+      BACKEND__ROOT_USER_IS_CREATE: ${ROOT_USER_IS_CREATE?Variable not set}
+      BACKEND__AUTH__JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${AUTH_JWT_ACCESS_TOKEN_EXPIRE_MINUTES?Variable not set}
+      BACKEND__AUTH__JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${AUTH_JWT_REFRESH_TOKEN_EXPIRE_DAYS?Variable not set}
+      BACKEND__AUTH__JWT_PRIVATE_KEY_PATH: ${AUTH_JWT_PRIVATE_KEY_PATH?Variable not set}
+      BACKEND__AUTH__JWT_PUBLIC_KEY_PATH: ${AUTH_JWT_PUBLIC_KEY_PATH?Variable not set}
+      BACKEND__AUTH__COOKIE_SECURE: ${AUTH_COOKIE_SECURE?Variable not set}
     volumes:
       - certificates-data:/app/certificates
     networks:

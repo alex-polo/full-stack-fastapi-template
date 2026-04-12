@@ -26,21 +26,23 @@ repos:
         args: [--config-file, "backend/pyproject.toml"]
         files: ^backend/
         additional_dependencies:
-          - pytest
-          - alembic
-          - fastapi
-          - pydantic
+          - sqlalchemy[mypy]
+          - pydantic[email]
           - pydantic-settings
-          - sqlalchemy
-          - gunicorn
-          - types-gunicorn
+          - fastapi
+          - alembic
+          - pyjwt[crypto]
           - types-PyJWT
-          - pyjwt
-          - passlib
+          - passlib[bcrypt]
           - types-passlib
-          - bcrypt
-          - argon2
+          - argon2-cffi
+          - asyncpg
+          - httpx
+          - python-multipart
           - tenacity
+          - pytest
+          - types-gunicorn
+          - sentry-sdk
 
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v10.0.2

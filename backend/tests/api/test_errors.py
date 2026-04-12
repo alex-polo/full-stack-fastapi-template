@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from httpx._models import Response
 
@@ -16,11 +16,11 @@ async def test_error_404_path_not_found(client: AsyncClient) -> None:
 
     assert response.status_code == 404
 
-    data: dict = response.json()
+    data: dict[str, Any] = response.json()
 
     assert "error" in data
 
-    error_obj: dict = data["error"]
+    error_obj: dict[str, Any] = data["error"]
 
     assert error_obj["code"] == "HTTP_404_ERROR"
     assert "not found" in error_obj["message"].lower()

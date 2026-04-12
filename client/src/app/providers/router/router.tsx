@@ -32,26 +32,6 @@ const SettingsPage = lazy(() =>
   }))
 );
 export const router = createBrowserRouter([
-  // TODO: delete
-  {
-    element: <DashboardLayout />,
-    handle: {
-      crumb: () => ({ label: 'Главная', path: ROUTE_PATHS.DASHBOARD }),
-    },
-    children: [
-      {
-        path: ROUTE_PATHS.DASHBOARD,
-        element: <DashboardPage />,
-      },
-      {
-        path: ROUTE_PATHS.SETTINGS,
-        element: <SettingsPage />,
-        handle: {
-          crumb: () => ({ label: 'Настройки', path: ROUTE_PATHS.SETTINGS }),
-        },
-      },
-    ],
-  },
   // Public pages
   {
     element: <BaseLayout />,
@@ -84,9 +64,21 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <DashboardLayout />,
+        handle: {
+          crumb: () => ({ label: 'Главная', path: ROUTE_PATHS.DASHBOARD }),
+        },
         children: [
-          { path: ROUTE_PATHS.DASHBOARD, element: <DashboardPage /> },
-          // { path: '/settings', element: <SettingsPage /> },
+          {
+            path: ROUTE_PATHS.DASHBOARD,
+            element: <DashboardPage />,
+          },
+          {
+            path: ROUTE_PATHS.SETTINGS,
+            element: <SettingsPage />,
+            handle: {
+              crumb: () => ({ label: 'Настройки', path: ROUTE_PATHS.SETTINGS }),
+            },
+          },
         ],
       },
     ],

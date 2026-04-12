@@ -48,6 +48,18 @@ class RepositoryError(AppBaseError):
         )
 
 
+class DomainError(AppBaseError):
+    """Base domain error."""
+
+
+class ApplicationError(AppBaseError):
+    """Base application error."""
+
+
+class InfrastructureError(AppBaseError):
+    """Base infrastructure error."""
+
+
 class EntityNotFoundError(RepositoryError):
     """Entity not found in DB."""
 

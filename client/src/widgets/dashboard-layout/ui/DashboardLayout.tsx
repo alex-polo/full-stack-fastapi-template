@@ -7,7 +7,7 @@ import {
 } from '@mui/icons-material';
 import { Box, Paper } from '@mui/material';
 import { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { DashboardNavbar } from './DashboardNavbar';
 import { DashboardSidebar } from './DashboardSidebar';
 
@@ -16,7 +16,6 @@ const NAVBAR_HEIGHT = 64;
 
 export const DashboardLayout = () => {
   const [open, setOpen] = useState(true);
-  const navigate = useNavigate();
 
   const navItems = [
     { text: 'Dashboard', icon: <DashIcon />, path: ROUTE_PATHS.DASHBOARD },
@@ -26,10 +25,7 @@ export const DashboardLayout = () => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <DashboardNavbar
-        onToggleDrawer={() => setOpen(!open)}
-        onLogout={() => navigate(ROUTE_PATHS.HOME)}
-      />
+      <DashboardNavbar onToggleDrawer={() => setOpen(!open)} />
 
       <DashboardSidebar
         open={open}
@@ -61,7 +57,7 @@ export const DashboardLayout = () => {
             elevation={0}
             sx={{
               p: { xs: 2, md: 4 },
-              borderRadius: 1, // Скругленные углы
+              borderRadius: 1,
               border: '1px solid',
               borderColor: 'divider',
               minHeight: '40vh',

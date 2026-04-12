@@ -1,5 +1,5 @@
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 from fastapi.exceptions import RequestValidationError
@@ -29,10 +29,10 @@ def test_app_error_handler_coverage() -> None:
 
     assert response.status_code == 404
 
-    data: dict = json.loads(response.body)
+    data: dict[str, Any] = json.loads(bytes(response.body).decode())
 
     assert "error" in data
-    error_obj: dict = data["error"]
+    error_obj: dict[str, Any] = data["error"]
 
     assert error_obj["code"] == "ERR_ENTITY_NOT_FOUND"
     assert error_obj["details"]["entity"] == "TestEntity"
@@ -49,9 +49,9 @@ def test_universal_handler_coverage() -> None:
     response: JSONResponse = universal_exception_handler(request, exc)
 
     assert response.status_code == 500
-    data: dict = json.loads(response.body)
+    data: dict[str, Any] = json.loads(bytes(response.body).decode())
     assert "error" in data
-    error_obj: dict = data["error"]
+    error_obj: dict[str, Any] = data["error"]
     assert error_obj["code"] == "INTERNAL_SERVER_ERROR"
 
 
@@ -72,10 +72,10 @@ def test_validation_handler_coverage() -> None:
     response: JSONResponse = validation_exception_handler(request, exc)
 
     assert response.status_code == 422
-    data: dict = json.loads(response.body)
+    data: dict[str, Any] = json.loads(bytes(response.body).decode())
 
     assert "error" in data
-    error_obj: dict = data["error"]
+    error_obj: dict[str, Any] = data["error"]
 
     assert error_obj["code"] == "VALIDATION_ERROR"
     assert "body.item_id" in error_obj["details"]
@@ -94,8 +94,8 @@ def test_sqlalchemy_handler_coverage() -> None:
     resp_integrity: JSONResponse = sqlalchemy_exception_handler(request, exc_integrity)
 
     assert resp_integrity.status_code == 400
-    data: dict = json.loads(resp_integrity.body)
+    data: dict[str, Any] = json.loads(bytes(resp_integrity.body).decode())
     assert "error" in data
-    error_obj: dict = data["error"]
+    error_obj: dict[str, Any] = data["error"]
 
     assert error_obj["code"] == "INTEGRITY_ERROR"

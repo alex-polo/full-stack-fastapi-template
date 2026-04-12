@@ -1,7 +1,4 @@
-import {
-  ExitToApp as ExitToAppIcon,
-  Menu as MenuIcon,
-} from '@mui/icons-material';
+import { Menu as MenuIcon } from '@mui/icons-material';
 import {
   AppBar,
   Box,
@@ -20,15 +17,19 @@ import {
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useSession } from '@/shared/api';
 import { PUBLIC_NAVIGATION, ROUTE_PATHS, SITE_CONFIG } from '@/shared/config';
 import {
   HeaderLogoDesktop,
   HeaderLogoMobile,
   ThemeToggleButton,
 } from '@/shared/ui';
+import LoginIcon from '@mui/icons-material/ExitToApp';
 
 export const PublicHeader = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { data: session } = useSession();
+  const isAuth = session?.isAuth;
 
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -126,16 +127,28 @@ export const PublicHeader = () => {
           {/* Theme and login buttons */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <ThemeToggleButton />
-            <Button
-              component={Link}
-              to={ROUTE_PATHS.LOGIN}
-              variant="outlined"
-              color="inherit"
-              startIcon={<ExitToAppIcon />}
-              sx={{ borderRadius: 2, textTransform: 'none' }}
-            >
-              Вход
-            </Button>
+            {isAuth ? (
+              <Button
+                component={Link}
+                to={ROUTE_PATHS.DASHBOARD}
+                variant="outlined"
+                color="inherit"
+                sx={{ borderRadius: 2, textTransform: 'none' }}
+              >
+                Панель управления
+              </Button>
+            ) : (
+              <Button
+                component={Link}
+                to={ROUTE_PATHS.LOGIN}
+                variant="outlined"
+                color="inherit"
+                startIcon={<LoginIcon />}
+                sx={{ borderRadius: 2, textTransform: 'none' }}
+              >
+                Вход
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Container>
