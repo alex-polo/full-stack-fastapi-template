@@ -1,11 +1,17 @@
 services:
   db:
     ports:
-      - "${POSTGRES_PORT?Variable not set}:5432"
+      - "${POSTGRES_PORT?Variable not set}:${POSTGRES_PORT?Variable not set}"
     restart: "no"
     logging:
       driver: "none"
 
+  redis:
+    restart: "no"
+    ports:
+      - "${REDIS_PORT?Variable not set}:${REDIS_PORT?Variable not set}"
+    logging:
+      driver: "none"
   backend:
     build:
       context: ./backend
@@ -15,6 +21,8 @@ services:
       - "${BACKEND_PORT?Variable not set}:${BACKEND_PORT?Variable not set}"
     depends_on: !override
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck: !reset
     environment:

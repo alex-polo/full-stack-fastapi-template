@@ -20,6 +20,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER?Variable not set}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?Variable not set}
       POSTGRES_DB: ${POSTGRES_DB?Variable not set}
+      PGPORT: ${POSTGRES_PORT?Variable not set}
       PGDATA: /var/lib/postgresql/data
     volumes:
       - db-data:/var/lib/postgresql
@@ -46,12 +47,39 @@ services:
     restart: unless-stopped
     <<: *default-logging
 
+  redis:
+    image: redis:8.6.2-alpine
+    command: redis-server --port ${REDIS_PORT?Variable not set} --appendonly yes --requirepass ${REDIS_PASSWORD?Variable not set}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "redis-cli",
+          "-p",
+          "${REDIS_PORT?Variable not set}",
+          "-a",
+          "${REDIS_PASSWORD?Variable not set}",
+          "ping",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    restart: unless-stopped
+    <<: *default-logging
+
   backend:
     image: "${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}"
     build:
       context: ./backend
       dockerfile: Dockerfile
     depends_on:
+      redis:
+        condition: service_healthy
       db:
         condition: service_healthy
       pgadmin:
@@ -129,6 +157,7 @@ volumes:
   db-data:
   pgadmin-data:
   certificates-data:
+  redis-data:
 
 networks:
   app-network:
