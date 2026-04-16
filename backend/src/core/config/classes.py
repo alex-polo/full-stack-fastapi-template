@@ -209,6 +209,31 @@ class RootUserSettings(BaseModel):
     is_create: bool = True
 
 
+class RedisSettings(BaseModel):
+    """Redis settings configuration."""
+
+    host: str = "redis"
+    port: int = 6379
+    max_connections: int = 10
+    password: SecretStr
+    db: int = 0
+    result_db: int = 1
+    socket_timeout: int = 5
+    socket_connect_timeout: int = 5
+    retry_on_timeout: bool = True
+    ssl: bool = False
+
+    @property
+    def celery_broker_url(self) -> str:
+        """Get Redis broker URL for Celery."""
+        return f"redis://:{self.password.get_secret_value()}@{self.host}:{self.port}/{self.db}"
+
+    @property
+    def celery_result_backend_url(self) -> str:
+        """Get Redis result backend URL for Celery."""
+        return f"redis://:{self.password.get_secret_value()}@{self.host}:{self.port}/{self.result_db}"
+
+
 class AppSettings(BaseConfiguration):
     """Server settings configuration."""
 
@@ -216,6 +241,7 @@ class AppSettings(BaseConfiguration):
     DOMAIN: str
     PROJECT: ProjectSettings
     DATABASE: DatabaseSettings
+    REDIS: RedisSettings
     ROOT_USER: RootUserSettings
     AUTH: AuthSettings
     API_PREFIX: ApiPrefix = ApiPrefix()
