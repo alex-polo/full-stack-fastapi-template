@@ -1,17 +1,26 @@
+x-dev-logging: &dev-logging
+  logging: !override
+    driver: "none"
+
 services:
   db:
     ports:
       - "${POSTGRES_PORT?Variable not set}:${POSTGRES_PORT?Variable not set}"
     restart: "no"
-    logging:
-      driver: "none"
+    <<: *dev-logging
+
+  pgadmin:
+    ports:
+      - "${PGADMIN_PORT?Variable not set}:${PGADMIN_PORT?Variable not set}"
+    restart: "no"
+    <<: *dev-logging
 
   redis:
     restart: "no"
     ports:
       - "${REDIS_PORT?Variable not set}:${REDIS_PORT?Variable not set}"
-    logging:
-      driver: "none"
+    <<: *dev-logging
+
   backend:
     build:
       context: ./backend
@@ -42,11 +51,61 @@ services:
             - .venv/
         - action: rebuild
           path: ./uv.lock
-    networks:
-      - app-network
-    logging:
-      driver: "none"
+    <<: *dev-logging
 
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    depends_on: !override
+      backend:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    restart: "no"
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/src/modules
+        - action: rebuild
+          path: ./backend/src/celery_app.py
+        - action: rebuild
+          path: ./backend/src/core/config/celeryconfig.py
+    <<: *dev-logging
+
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    depends_on: !override
+      backend:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    restart: "no"
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/src/modules
+        - action: rebuild
+          path: ./backend/src/celery_app.py
+        - action: rebuild
+          path: ./backend/src/core/config/celeryconfig.py
+    <<: *dev-logging
+  flower:
+    image: "${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    command: >
+      celery -A src.celery_app flower
+      --port=${FLOWER_PORT?Variable not set}
+      --basic_auth=${FLOWER_BASIC_AUTH?Variable not set}
+      --loglevel=${LOG_LEVEL?Variable not set}
+    restart: "no"
+    ports:
+      - "${FLOWER_PORT?Variable not set}:${FLOWER_PORT}"
+    <<: *dev-logging
   maildev:
     image: maildev/maildev
     restart: "no"
@@ -59,13 +118,7 @@ services:
       - MAILDEV_SMTP_PORT=1025
     networks:
       - app-network
-    logging:
-      driver: "none"
-
-  pgadmin:
-    restart: "no"
-    logging:
-      driver: "none"
+    <<: *dev-logging
 
   client:
     build:
@@ -81,17 +134,14 @@ services:
         condition: service_started
     healthcheck:
       disable: true
-    environment:
+    environment: !override
       VITE_API_URL: ${BACKEND_API_PREFIX?Variable not set}
       VITE_BACKEND_HOST: ${BACKEND_HOST?Variable not set}
       VITE_BACKEND_PORT: ${BACKEND_PORT?Variable not set}
     volumes:
       - ./client:/spa
       - client-node-modules:/spa/node_modules
-    networks:
-      - app-network
-    logging:
-      driver: "none"
+    <<: *dev-logging
 
 volumes:
   client-node-modules:
