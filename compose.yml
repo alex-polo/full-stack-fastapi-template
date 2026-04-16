@@ -113,6 +113,8 @@ services:
         condition: service_healthy
       pgadmin:
         condition: service_started
+    entrypoint: ["./scripts/prestart.sh"]
+    command: ["run_main"]
     healthcheck:
       test:
         [
