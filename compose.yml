@@ -7,15 +7,49 @@ x-logging: &default-logging
       max-size: "10m"
       max-file: "3"
 
+x-healthcheck: &default-healthcheck
+  interval: 10s
+  timeout: 5s
+  retries: 3
+  start_period: 30s
+
+x-extra-host: &extra-host
+  - "glitchtip.local:host-gateway"
+
+x-backend-env: &backend-env
+  BACKEND__ENVIRONMENT: ${ENVIRONMENT?Variable not set}
+  BACKEND__DOMAIN: ${DOMAIN?Variable not set}
+  BACKEND__PROJECT__PROJECT_NAME: ${PROJECT_NAME?Variable not set}
+  BACKEND__PROJECT__DESCRIPTION: ${PROJECT_DESCRIPTION?Variable not set}
+  BACKEND__API_PREFIX_PREFIX: ${BACKEND_API_PREFIX?Variable not set}
+  BACKEND__GUNICORN__PORT: ${BACKEND_PORT?Variable not set}
+  BACKEND__DATABASE__HOST: ${POSTGRES_SERVER?Variable not set}
+  BACKEND__DATABASE__PORT: ${POSTGRES_PORT?Variable not set}
+  BACKEND__DATABASE__USER: ${POSTGRES_USER?Variable not set}
+  BACKEND__DATABASE__USER_PASSWORD: ${POSTGRES_PASSWORD?Variable not set}
+  BACKEND__DATABASE__DB_NAME: ${POSTGRES_DB?Variable not set}
+  BACKEND__LOGGING__LOG_LEVEL: ${LOG_LEVEL?Variable not set}
+  BACKEND__LOGGING__SENTRY_DSN: ${SENTRY_DSN?Variable not set}
+  BACKEND__LOGGING__SENTRY_LOG_LEVEL: ${SENTRY_LOG_LEVEL?Variable not set}
+  BACKEND__ROOT_USER_EMAIL: ${ROOT_USER_EMAIL?Variable not set}
+  BACKEND__ROOT_USER_PASSWORD: ${ROOT_USER_PASSWORD?Variable not set}
+  BACKEND__ROOT_USER_IS_CREATE: ${ROOT_USER_IS_CREATE?Variable not set}
+  BACKEND__AUTH__JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${AUTH_JWT_ACCESS_TOKEN_EXPIRE_MINUTES?Variable not set}
+  BACKEND__AUTH__JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${AUTH_JWT_REFRESH_TOKEN_EXPIRE_DAYS?Variable not set}
+  BACKEND__AUTH__JWT_PRIVATE_KEY_PATH: ${AUTH_JWT_PRIVATE_KEY_PATH?Variable not set}
+  BACKEND__AUTH__JWT_PUBLIC_KEY_PATH: ${AUTH_JWT_PUBLIC_KEY_PATH?Variable not set}
+  BACKEND__AUTH__COOKIE_SECURE: ${AUTH_COOKIE_SECURE?Variable not set}
+  BACKEND__REDIS__HOST: ${REDIS_HOST?Variable not set}
+  BACKEND__REDIS__PORT: ${REDIS_PORT?Variable not set}
+  BACKEND__REDIS__PASSWORD: ${REDIS_PASSWORD?Variable not set}
+  BACKEND__REDIS__SSL: ${REDIS_SSL?Variable not set}
+
 services:
   db:
     image: postgres:18.1
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+      <<: *default-healthcheck
     environment:
       POSTGRES_USER: ${POSTGRES_USER?Variable not set}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD?Variable not set}
@@ -34,10 +68,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "${PGADMIN_PORT?Variable not set}:80"
     environment:
-      PGADMIN_LISTEN_PORT: 80
+      PGADMIN_LISTEN_PORT: ${PGADMIN_PORT?Variable not set}
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL?Variable not set}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD?Variable not set}
     volumes:
@@ -61,10 +93,7 @@ services:
           "${REDIS_PASSWORD?Variable not set}",
           "ping",
         ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+      <<: *default-healthcheck
     volumes:
       - redis-data:/data
     networks:
@@ -90,36 +119,77 @@ services:
           "CMD-SHELL",
           "curl -f http://localhost:${BACKEND_PORT?Variable not set}/api/v1/utils/health-check",
         ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-    extra_hosts:
-      - "glitchtip.local:host-gateway"
+      <<: *default-healthcheck
+    extra_hosts: *extra-host
     environment:
-      BACKEND__ENVIRONMENT: ${ENVIRONMENT?Variable not set}
-      BACKEND__DOMAIN: ${DOMAIN?Variable not set}
-      BACKEND__PROJECT__PROJECT_NAME: ${PROJECT_NAME?Variable not set}
-      BACKEND__PROJECT__DESCRIPTION: ${PROJECT_DESCRIPTION?Variable not set}
-      BACKEND__API_PREFIX_PREFIX: ${BACKEND_API_PREFIX?Variable not set}
-      BACKEND__GUNICORN__PORT: ${BACKEND_PORT?Variable not set}
-      BACKEND__DATABASE__HOST: ${POSTGRES_SERVER?Variable not set}
-      BACKEND__DATABASE__PORT: ${POSTGRES_PORT?Variable not set}
-      BACKEND__DATABASE__USER: ${POSTGRES_USER?Variable not set}
-      BACKEND__DATABASE__USER_PASSWORD: ${POSTGRES_PASSWORD?Variable not set}
-      BACKEND__DATABASE__DB_NAME: ${POSTGRES_DB?Variable not set}
-      BACKEND__LOGGING__SENTRY_DSN: ${SENTRY_DSN?Variable not set}
-      BACKEND__LOGGING__SENTRY_LOG_LEVEL: ${SENTRY_LOG_LEVEL?Variable not set}
-      BACKEND__ROOT_USER_EMAIL: ${ROOT_USER_EMAIL?Variable not set}
-      BACKEND__ROOT_USER_PASSWORD: ${ROOT_USER_PASSWORD?Variable not set}
-      BACKEND__ROOT_USER_IS_CREATE: ${ROOT_USER_IS_CREATE?Variable not set}
-      BACKEND__AUTH__JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${AUTH_JWT_ACCESS_TOKEN_EXPIRE_MINUTES?Variable not set}
-      BACKEND__AUTH__JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${AUTH_JWT_REFRESH_TOKEN_EXPIRE_DAYS?Variable not set}
-      BACKEND__AUTH__JWT_PRIVATE_KEY_PATH: ${AUTH_JWT_PRIVATE_KEY_PATH?Variable not set}
-      BACKEND__AUTH__JWT_PUBLIC_KEY_PATH: ${AUTH_JWT_PUBLIC_KEY_PATH?Variable not set}
-      BACKEND__AUTH__COOKIE_SECURE: ${AUTH_COOKIE_SECURE?Variable not set}
+      <<: *backend-env
     volumes:
       - certificates-data:/app/certificates
+    networks:
+      - app-network
+    restart: unless-stopped
+    <<: *default-logging
+
+  celery-beat:
+    image: "${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    command: celery -A src.celery_app beat --loglevel=${LOG_LEVEL?Variable not set}
+    environment:
+      <<: *backend-env
+    extra_hosts: *extra-host
+    networks:
+      - app-network
+    restart: unless-stopped
+    <<: *default-logging
+
+  celery-worker:
+    image: "${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    command: celery -A src.celery_app worker --loglevel=${LOG_LEVEL?Variable not set}
+    environment:
+      <<: *backend-env
+    extra_hosts: *extra-host
+    networks:
+      - app-network
+    restart: unless-stopped
+    <<: *default-logging
+  flower:
+    image: "${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      redis:
+        condition: service_healthy
+      celery-worker:
+        condition: service_started
+    command: >
+      celery -A src.celery_app flower
+      --port=${FLOWER_PORT?Variable not set}
+      --url_prefix=${FLOWER_API_PREFIX?Variable not set}
+      --basic_auth=${FLOWER_BASIC_AUTH?Variable not set}
+      --loglevel=${LOG_LEVEL?Variable not set}
+    environment:
+      <<: *backend-env
+    extra_hosts: *extra-host
     networks:
       - app-network
     restart: unless-stopped
@@ -140,14 +210,17 @@ services:
       - "${CLIENT_PORT?Variable not set}:80"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:80"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+      <<: *default-healthcheck
     environment:
       BACKEND_API_PREFIX: ${BACKEND_API_PREFIX?Variable not set}
       BACKEND_HOST: ${BACKEND_HOST?Variable not set}
       BACKEND_PORT: ${BACKEND_PORT?Variable not set}
+      FLOWER_HOST: flower
+      FLOWER_PORT: ${FLOWER_PORT?Variable not set}
+      FLOWER_API_PREFIX: ${FLOWER_API_PREFIX?Variable not set}
+      PGADMIN_API_PREFIX: ${PGADMIN_API_PREFIX?Variable not set}
+      PGADMIN_HOST: pgadmin
+      PGADMIN_PORT: ${PGADMIN_PORT?Variable not set}
     networks:
       - app-network
     restart: unless-stopped
