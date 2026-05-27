@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Literal
 
@@ -20,7 +21,7 @@ class BaseConfiguration(BaseSettings):
     """Base settings configuration class."""
 
     model_config = SettingsConfigDict(
-        env_file=(".env.local",),
+        env_file=os.getenv("ENV_FILE", ".env.local"),
         env_file_encoding="utf-8",
         case_sensitive=False,
         env_nested_delimiter="__",
