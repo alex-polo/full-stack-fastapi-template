@@ -9,12 +9,6 @@ if TYPE_CHECKING:
     from collections.abc import AsyncGenerator
 
 
-@pytest.fixture(scope="session")
-def anyio_backend() -> str:
-    """Required fixture for pytest-asyncio/anyio to work."""
-    return "asyncio"
-
-
 @pytest.fixture(scope="module")
 async def client() -> AsyncGenerator[AsyncClient]:
     """AsyncClient for testing FastAPI application."""

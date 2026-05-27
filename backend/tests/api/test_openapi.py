@@ -1,14 +1,11 @@
 from typing import TYPE_CHECKING
 
-import pytest
-
 from src.core.config.settings import APP_SETTINGS
 
 if TYPE_CHECKING:
     from httpx import AsyncClient, Response
 
 
-@pytest.mark.anyio
 async def test_openapi_json_schema_format(client: AsyncClient) -> None:
     """Check OpenAPI JSON schema format and ErrorSchema presence."""
     url: str = APP_SETTINGS.PROJECT.openapi_url
@@ -24,7 +21,6 @@ async def test_openapi_json_schema_format(client: AsyncClient) -> None:
     assert "ErrorDetail" in schema["components"]["schemas"]
 
 
-@pytest.mark.anyio
 async def test_swagger_ui_is_reachable(client: AsyncClient) -> None:
     """Check that Swagger UI (HTML) page is reachable."""
     url: str = APP_SETTINGS.PROJECT.docs_url
