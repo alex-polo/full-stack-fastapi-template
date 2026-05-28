@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from collections.abc import Generator
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="package", autouse=True)
 def setup_test_celery() -> Generator[None]:
     """Setup Celery for testing."""
     celery_app.conf.task_always_eager = True
