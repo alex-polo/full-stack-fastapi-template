@@ -65,12 +65,18 @@ services:
     restart: "no"
     develop:
       watch:
-        - action: rebuild
+        - action: sync+restart
           path: ./backend/src/modules
-        - action: rebuild
+          target: /app/src/modules
+        - action: sync+restart
+          path: ./backend/src/notifications
+          target: /app/src/notifications
+        - action: sync+restart
           path: ./backend/src/celery_app.py
-        - action: rebuild
+          target: /app/src/celery_app.py
+        - action: sync+restart
           path: ./backend/src/core/config/celeryconfig.py
+          target: /app/src/core/config/celeryconfig.py
     <<: *dev-logging
 
   celery-worker:
@@ -85,12 +91,18 @@ services:
     restart: "no"
     develop:
       watch:
-        - action: rebuild
+        - action: sync+restart
           path: ./backend/src/modules
-        - action: rebuild
+          target: /app/src/modules
+        - action: sync+restart
+          path: ./backend/src/notifications
+          target: /app/src/notifications
+        - action: sync+restart
           path: ./backend/src/celery_app.py
-        - action: rebuild
+          target: /app/src/celery_app.py
+        - action: sync+restart
           path: ./backend/src/core/config/celeryconfig.py
+          target: /app/src/core/config/celeryconfig.py
     <<: *dev-logging
   flower:
     image: "${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}"
