@@ -58,6 +58,7 @@ redis_backend_use_ssl = APP_SETTINGS.REDIS.ssl
 
 # Celery Beat: Scheduler for periodic tasks
 beat_scheduler = "celery.beat:PersistentScheduler"
-beat_schedule_filename = "/app/celerybeat-schedule"
+# beat_schedule_filename = "/app/celerybeat-schedule"  # noqa: ERA001
+beat_schedule_filename = "./celerybeat-schedule"
 beat_max_loop_interval = 5  # Check for new tasks every 3 seconds
 beat_sync_every = 10  # Sync schedule to disk every 10 seconds

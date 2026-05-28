@@ -12,7 +12,7 @@ celery_app.config_from_object("src.core.config.celeryconfig")
 
 celery_app.autodiscover_tasks(["src.modules", "src.notifications"])
 
-beat_schedule = {
+celery_app.conf.beat_schedule = {
     "every-5-seconds": {
         "task": "src.notifications.tasks.send_test_task",
         "schedule": timedelta(seconds=5),
