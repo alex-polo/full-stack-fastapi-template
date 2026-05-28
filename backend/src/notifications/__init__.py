@@ -1,3 +1,3 @@
-from src.notifications.tasks import test_task
+from src.notifications.tasks import send_test_task
 
-__all__ = ("test_task",)
+__all__ = ("send_test_task",)
