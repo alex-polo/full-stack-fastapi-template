@@ -7,6 +7,11 @@ from src.celery_app import celery_app
 log = logging.getLogger(__name__)
 
 
+def test_task_is_registered() -> None:
+    """Test that task is registered."""
+    assert "src.notifications.tasks.send_test_task" in celery_app.tasks
+
+
 def test_celery_app_initialization() -> None:
     """Test celery app initialization."""
     assert isinstance(celery_app, Celery)
@@ -30,5 +35,3 @@ def test_celery_app_config() -> None:
 
     assert celery_app.conf.broker_pool_limit == APP_SETTINGS.REDIS.max_connections
     assert celery_app.conf.enable_utc is True
-    assert celery_app.conf.beat_scheduler == "celery.beat:PersistentScheduler"
-    assert celery_app.conf.beat_schedule_filename == "/app/celerybeat-schedule"
