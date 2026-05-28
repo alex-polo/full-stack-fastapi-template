@@ -14,7 +14,7 @@ celery_app.autodiscover_tasks(["src.modules", "src.notifications"])
 
 beat_schedule = {
     "every-5-seconds": {
-        "task": "src.notifications.tasks.test_task",
+        "task": "src.notifications.tasks.send_test_task",
         "schedule": timedelta(seconds=5),
         "args": ["Project is testing message!"],
     },
