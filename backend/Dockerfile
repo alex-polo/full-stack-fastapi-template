@@ -93,7 +93,7 @@ RUN chmod +x ./scripts/prestart.sh
 # # Run the FastAPI application by production mod
 # CMD ["run_main"]
 
-ENTRYPOINT ["./scripts/prestart.sh"]
+# ENTRYPOINT ["./scripts/prestart.sh"]
 
 # Run the development entrypoint defined in pyproject.toml.
-CMD ["run_main"]
+#CMD ["run_main"]

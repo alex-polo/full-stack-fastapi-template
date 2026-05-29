@@ -23,6 +23,9 @@ dependencies = [
     "argon2-cffi>=25.1.0",
     "types-passlib>=1.7.7.20260211",
     "types-pyjwt>=1.7.1",
+    "celery[redis]>=5.6.3",
+    "flower>=2.0.1",
+    "celery-types>=0.26.0",
 ]
 
 [dependency-groups]
@@ -32,6 +35,11 @@ dev = [
     "pytest>=9.0.2",
     "pytest-asyncio>=1.3.0",
     "pytest-cov>=7.0.0",
+    "pytest-deadfixtures>=3.1.0",
+    "pytest-env>=1.6.0",
+    "pytest-html>=4.2.0",
+    "pytest-sugar>=1.1.1",
+    "pytest-xdist>=3.8.0",
     "ruff>=0.15.5",
 ]
 
@@ -188,12 +196,15 @@ warn_untyped_fields = true              # Warn if fields are not explicitly type
 minversion = "9.0"
 testpaths = ["tests"]
 log_cli = true
-log_cli_level = "ERROR"
+log_cli_level = "INFO"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
-addopts = "-ra -vv --tb=short --cov=src --cov-report=term-missing"
+addopts = "-ra -vv --tb=short -n auto --cov=src --cov-report=term-missing --cov-report=html:pytest_reports/coverage --html=pytest_reports/report.html --self-contained-html"
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
 python_files = "test_*.py"
-
+env = [
+    "ENV_FILE=.env.test",
+]
 
 [tool.coverage.run]
 source = ["src"]

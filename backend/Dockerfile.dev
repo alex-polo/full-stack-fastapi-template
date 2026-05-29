@@ -53,7 +53,7 @@ RUN chmod +x ./scripts/prestart.sh
 # Reset the entrypoint, don't invoke `uv`
 
 
-ENTRYPOINT ["./scripts/prestart.sh"]
+#ENTRYPOINT ["./scripts/prestart.sh"]
 
 # Run the development entrypoint defined in pyproject.toml.
-CMD ["run_dev"]
+#CMD ["run_dev"]

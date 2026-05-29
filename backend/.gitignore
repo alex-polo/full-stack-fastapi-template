@@ -11,3 +11,5 @@ build
 dist
 .idea
 *.pem
+pytest_reports/
+celerybeat-schedule*

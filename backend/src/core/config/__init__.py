@@ -7,7 +7,7 @@ from .classes import (
     ProjectSettings,
     UvicornSettings,
 )
-from .logging import setup_logging
+from .logging import init_celery_sentry, setup_logging
 from .settings import APP_SETTINGS
 
 __all__ = (
@@ -19,5 +19,6 @@ __all__ = (
     "LoggingSettings",
     "ProjectSettings",
     "UvicornSettings",
+    "init_celery_sentry",
     "setup_logging",
 )
