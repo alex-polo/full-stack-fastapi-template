@@ -29,8 +29,8 @@ x-backend-env: &backend-env
   BACKEND__DATABASE__USER_PASSWORD: ${POSTGRES_PASSWORD?Variable not set}
   BACKEND__DATABASE__DB_NAME: ${POSTGRES_DB?Variable not set}
   BACKEND__LOGGING__LOG_LEVEL: ${LOG_LEVEL?Variable not set}
-  BACKEND__LOGGING__SENTRY_DSN: ${SENTRY_DSN?Variable not set}
-  BACKEND__LOGGING__SENTRY_LOG_LEVEL: ${SENTRY_LOG_LEVEL?Variable not set}
+  BACKEND__LOGGING__SENTRY_DSN: ${SENTRY_DSN}
+  BACKEND__LOGGING__SENTRY_LOG_LEVEL: ${SENTRY_LOG_LEVEL-ERROR}
   BACKEND__ROOT_USER__EMAIL: ${ROOT_USER_EMAIL?Variable not set}
   BACKEND__ROOT_USER__PASSWORD: ${ROOT_USER_PASSWORD?Variable not set}
   BACKEND__ROOT_USER__IS_CREATE: ${ROOT_USER_IS_CREATE?Variable not set}
@@ -118,7 +118,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -f http://localhost:${BACKEND_PORT?Variable not set}/api/v1/utils/health-check",
+          "curl -f http://localhost:${BACKEND_PORT?Variable not set}/api/v1/utils/health-check || exit 1",
         ]
       <<: *default-healthcheck
     extra_hosts: *extra-host

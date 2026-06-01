@@ -36,6 +36,7 @@ services:
     healthcheck: !reset
     environment:
       BACKEND__UVICORN__PORT: ${BACKEND_PORT?Variable not set}
+      BACKEND__CORS__ALLOW_ORIGINS: ${BACKEND_CORS_ORIGINS?Variable not set}
     volumes: !override
       - ./backend/certificates:/app/certificates
     #   - ./backend/htmlcov:/app/htmlcov

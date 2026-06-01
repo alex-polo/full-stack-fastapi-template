@@ -37,7 +37,7 @@ class LoggingSettings(BaseModel):
     log_level: LogLevel = "INFO"
     log_format: str = "%(asctime)s %(levelname)6s %(name)s: %(message)s"
     log_date_format: str = "%Y-%m-%d %H:%M:%S"
-    sentry_dsn: HttpUrl | None = None
+    sentry_dsn: HttpUrl | str = ""
     sentry_traces_sample_rate: float = 1.0
     sentry_log_level: LogLevel = "INFO"
 
@@ -123,12 +123,7 @@ class CORSSettings(BaseModel):
 
     allow_credentials: bool = False
     allow_headers: list[str] = ["Content-Type", "Authorization"]
-
-    allow_origins: list[str] = [
-        "http://localhost:5173",
-        "http://localhost",
-    ]
-
+    allow_origins: list[str] = []
     allow_methods: list[str] = [
         "GET",
         "POST",
