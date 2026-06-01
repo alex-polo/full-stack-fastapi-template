@@ -202,7 +202,7 @@ class RootUserSettings(BaseModel):
 
     email: str
     password: SecretStr
-    is_create: bool = True
+    should_create: bool = False
 
 
 class RedisSettings(BaseModel):

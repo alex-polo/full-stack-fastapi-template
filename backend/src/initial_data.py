@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 async def init() -> None:
     """Initialize database connection."""
-    if not APP_SETTINGS.ROOT_USER.is_create:
+    if not APP_SETTINGS.ROOT_USER.should_create:
         log.info("No root user creation required")
         return
 
