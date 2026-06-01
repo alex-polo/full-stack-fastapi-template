@@ -1,48 +1,66 @@
 # Full-Stack FastAPI Template
 
-Полноценный шаблон для создания современного full-stack приложения на базе FastAPI и React с использованием лучших практик разработки.
+Шаблон full-stack приложения на базе FastAPI и React.
 
 ## 📋 Описание
 
-Этот шаблон предоставляет готовую архитектуру для быстрого старта проекта с:
+Шаблон предоставляет готовую архитектуру для быстрого старта проекта:
 
 - **Backend**: FastAPI с SQLAlchemy, Celery, Pydantic, Alembic
-- **Frontend**: React + TypeScript + Vite с Material-UI
+- **Frontend**: React, TypeScript, Vite, Material-UI
 - **DevOps**: Docker, Docker Compose, pre-commit hooks
-- **Monitoring**: Sentry для отслеживания ошибок
+- **Monitoring**: Flower (Celery), Sentry
+- **Database**: PostgreSQL + pgAdmin
 - **Testing**: pytest с покрытием кода
 
 ## 🛠 Технологический стек
 
 ### Backend
 
-- **FastAPI** - современный веб-фреймворк для Python
-- **SQLAlchemy** - ORM для работы с базой данных
-- **Celery** - асинхронная задача и брокер сообщений
-- **Pydantic** - валидация данных и сериализация
-- **Alembic** - миграции базы данных
-- **Redis** - брокер сообщений для Celery
-- **Sentry** - мониторинг и отладка ошибок
-- **Pytest** - тестирование
+- **FastAPI** — современный веб-фреймворк для Python
+- **SQLAlchemy** — ORM для работы с базой данных (async)
+- **Alembic** — миграции базы данных
+- **Celery** — асинхронные задачи и брокер сообщений
+- **Redis** — брокер сообщений для Celery
+- **Pydantic** — валидация данных и сериализация
+- **Pydantic Settings** — управление конфигурацией
+- **Gunicorn + Uvicorn** — production ASGI-сервер
+- **PyJWT** — аутентификация на основе JWT (RSA-ключи)
+- **Sentry** — мониторинг и отладка ошибок
+- **Flower** — веб-мониторинг Celery
+- **Pytest** — тестирование
 
 ### Frontend
 
-- **React 19** - библиотека для создания пользовательских интерфейсов
-- **TypeScript** - статическая типизация
-- **Vite** - инструмент сборки
-- **Material-UI** - компоненты для React
-- **React Router** - маршрутизация
-- **TanStack Query** - управление состоянием и кеширование
-- **React Hook Form** - управление формами
-- **Zod** - валидация схем
+- **React 19** — библиотека для создания пользовательских интерфейсов
+- **TypeScript** — статическая типизация
+- **Vite** — инструмент сборки
+- **Material-UI** — компоненты для React
+- **React Router** — маршрутизация
+- **TanStack Query** — управление состоянием серверных данных и кеширование
+- **React Hook Form** — управление формами
+- **Zod** — валидация схем
+- **Axios** — HTTP-клиент
 
 ### DevOps
 
-- **Docker** - контейнеризация
-- **Docker Compose** - оркестрация контейнеров
-- **Pre-commit** - автоматическая проверка кода
-- **Ruff** - линтер и форматтер для Python
-- **ESLint** - линтер для JavaScript/TypeScript
+- **Docker** — контейнеризация
+- **Docker Compose** — оркестрация контейнеров
+- **uv** — быстрый менеджер пакетов Python (вместо pip)
+- **Pre-commit** — автоматическая проверка кода
+- **Ruff** — линтер и форматтер для Python
+- **Mypy** — статический анализ типов Python
+- **ESLint** — линтер для JavaScript/TypeScript
+- **Prettier** — форматтер для фронтенда
+
+### Инфраструктура (Docker Compose)
+
+- **PostgreSQL** — основная база данных
+- **pgAdmin** — веб-интерфейс управления PostgreSQL
+- **Redis** — брокер сообщений и кеш
+- **Flower** — мониторинг Celery-задач
+- **MailDev** — тестовый SMTP-сервер (в dev-режиме)
+- **Nginx** — проксирование (встроен в Docker-образ клиента)
 
 ## 📦 Установка
 
@@ -50,8 +68,9 @@
 
 - Python 3.14+
 - Node.js 20+
-- Docker и Docker Compose
+- Docker и Docker Compose V2
 - Git
+- [uv](https://docs.astral.sh/uv/) — менеджер пакетов Python (для локальной разработки)
 
 ### Клонирование репозитория
 
@@ -60,64 +79,67 @@ git clone https://github.com/alex-polo/full-stack-fastapi-template.git
 cd full-stack-fastapi-template
 ```
 
-### Установка зависимостей
-
-#### Backend
-
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate  # На Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-#### Frontend
-
-```bash
-cd client
-npm install
-```
-
 ## 🚀 Запуск
 
-### Вариант 1: Использование Docker
+### Production-режим
 
 ```bash
+# Копирование шаблона окружения
+cp .env.prod.example .env.prod
+
 # Запуск всех сервисов
-docker-compose up -d
+docker compose --env-file .env.prod up -d --build
 
 # Остановка всех сервисов
-docker-compose down
+docker compose --env-file .env.prod down
 ```
 
-### Вариант 2: Локальный запуск
+В production-режиме наружу exposed **только порт клиента** (`CLIENT_PORT`). Все сервисы доступны через Nginx, встроенный в Docker-образ клиента, по префиксам, заданным в `.env`:
 
-#### Backend
+| Путь                     | Сервис                          | Переменная окружения |
+| ------------------------ | ------------------------------- | -------------------- |
+| `${BACKEND_API_PREFIX}`  | Backend API                     | `BACKEND_API_PREFIX` |
+| `${FLOWER_API_PREFIX}/`  | Flower (мониторинг Celery)      | `FLOWER_API_PREFIX`  |
+| `${PGADMIN_API_PREFIX}/` | pgAdmin (управление PostgreSQL) | `PGADMIN_API_PREFIX` |
+
+Значения по умолчанию в файлах `.env.*.example`:
+
+- Frontend: `http://localhost:8080/`
+- Backend API: `http://localhost:8080/api`
+- Flower: `http://localhost:8080/admin/flower/`
+- pgAdmin: `http://localhost:8080/admin/pgadmin/`
+
+### Development-режим (с hot-reload)
 
 ```bash
+# Копирование шаблона окружения для разработки
+cp .env.dev.example .env.dev
+
+# Установка backend-зависимостей (включая dev-группу: pytest, ruff, mypy и др.)
 cd backend
+uv sync --group dev
 
-# Активация виртуального окружения
-source .venv/bin/activate
+# Установка pre-commit hooks
+pre-commit install
+cd ..
 
-# Запуск в режиме разработки
-python run_dev.py
-
-# Или запуск в режиме производства
-python run_main.py
-```
-
-#### Frontend
-
-```bash
+# Установка frontend-зависимостей
 cd client
+npm install
+cd ..
 
-# Запуск в режиме разработки
-npm run dev
-
-# Сборка для производства
-npm run build
+# Запуск всех сервисов
+docker compose --env-file .env.dev up --watch --build
 ```
+
+В dev-режиме доступны:
+
+- Backend с hot-reload (через Docker Compose Watch)
+- Frontend с hot-reload на порту из `CLIENT_PORT`
+- MailDev — тестовый почтовый сервер (веб-интерфейс + SMTP)
+- Порты PostgreSQL, Redis, pgAdmin проброшены на хост
+
+Значения портов указаны в файле `.env.dev` и могут быть изменены
 
 ## 🛠 Разработка
 
@@ -139,55 +161,64 @@ pre-commit install
 ### Тестирование
 
 ```bash
+cd backend
+
 # Запуск всех тестов
 pytest
 
 # С запуском покрытия
 pytest --cov=src
-
-# С определенным тестом
-pytest tests/test_example.py
-```
-
-### Миграции базы данных
-
-```bash
-cd backend
-
-# Создание новой миграции
-alembic revision --autogenerate -m "description"
-
-# Применение миграций
-alembic upgrade head
-
-# Откат миграции
-alembic downgrade -1
 ```
 
 ## 🔧 Конфигурация
 
 ### Переменные окружения
 
-Создайте файл `.env` в корне проекта на основе `.env.example`:
-
-```bash
-cp .env.example .env
-```
-
 Основные переменные:
 
-- `DATABASE_URL` - строка подключения к базе данных
-- `REDIS_URL` - URL для Redis
-- `SENTRY_DSN` - DSN для Sentry
-- `JWT_SECRET_KEY` - секретный ключ для JWT
-- `CORS_ORIGINS` - разрешенные origins для CORS
+| Переменная                             | Описание                                                   |
+| -------------------------------------- | ---------------------------------------------------------- |
+| `ENVIRONMENT`                          | Окружение: `local`, `staging`, `development`, `production` |
+| `DOMAIN`                               | Домен проекта                                              |
+| `PROJECT_NAME`                         | Название проекта                                           |
+| `BACKEND_PORT`                         | Порт backend API                                           |
+| `BACKEND_API_PREFIX`                   | Префикс API (например, `/api`)                             |
+| `CLIENT_PORT`                          | Порт фронтенда                                             |
+| `POSTGRES_SERVER`                      | Хост PostgreSQL                                            |
+| `POSTGRES_PORT`                        | Порт PostgreSQL                                            |
+| `POSTGRES_DB`                          | Имя базы данных                                            |
+| `POSTGRES_USER`                        | Пользователь PostgreSQL                                    |
+| `POSTGRES_PASSWORD`                    | Пароль PostgreSQL                                          |
+| `REDIS_HOST`                           | Хост Redis                                                 |
+| `REDIS_PORT`                           | Порт Redis                                                 |
+| `REDIS_PASSWORD`                       | Пароль Redis                                               |
+| `SENTRY_DSN`                           | DSN для Sentry                                             |
+| `AUTH_JWT_PRIVATE_KEY_PATH`            | Путь к приватному RSA-ключу JWT                            |
+| `AUTH_JWT_PUBLIC_KEY_PATH`             | Путь к публичному RSA-ключу JWT                            |
+| `AUTH_JWT_ACCESS_TOKEN_EXPIRE_MINUTES` | Время жизни access-токена (минуты)                         |
+| `AUTH_JWT_REFRESH_TOKEN_EXPIRE_DAYS`   | Время жизни refresh-токена (дни)                           |
+| `ROOT_USER_EMAIL`                      | Email root-пользователя                                    |
+| `ROOT_USER_PASSWORD`                   | Пароль root-пользователя                                   |
+| `PGADMIN_PORT`                         | Порт pgAdmin                                               |
+| `FLOWER_PORT`                          | Порт Flower                                                |
+| `FLOWER_BASIC_AUTH`                    | Данные авторизации Flower (user:password)                  |
 
-### Docker Compose
+### Docker Compose сервисы
 
 Файл `compose.yml` содержит конфигурацию для:
 
-- Backend API
-- Frontend React
-- PostgreSQL
-- Redis
-- Nginx (для проксирования)
+- **db** — PostgreSQL 18
+- **redis** — Redis 8 (Alpine)
+- **pgadmin** — pgAdmin 4 (веб-интерфейс для PostgreSQL)
+- **backend** — FastAPI приложение (Gunicorn + Uvicorn)
+- **celery-beat** — планировщик периодических задач
+- **celery-worker** — воркер фоновых задач
+- **flower** — мониторинг Celery
+- **client** — React приложение (Nginx в production, Vite dev-сервер в development)
+
+Файл `compose.override.yml` добавляет настройки для разработки:
+
+- Проброс портов на хост
+- Hot-reload для backend и frontend
+- MailDev для тестирования email
+- Отключение healthcheck для ускорения
