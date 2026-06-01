@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING
 
 from src.auth.domain.entities import CookieSettings, TokenEntity
-from src.users.domain.entities import UserEntity
 
 from .exceptions import (
     AccountDisabledError,
